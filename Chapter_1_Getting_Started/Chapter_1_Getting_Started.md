@@ -64,10 +64,84 @@ std::cout << /* "*/" */";
 /**/ */ /*
 ```
 
-## [练习1.9](exercise1_9.cpp)
+## [练习1.9](1。9.cpp)
 
 > 编写程序，使用while循环将50到100的整数相加。
 
-## [练习1.10](exercise1_10.cpp)
+## [练习1.10](1,10.cpp)
 
 > 除了++运算符将运算对象的值增加1之外，还有一个递减运算符（--）实现将值减少1。编写程序，使用递减运算符在循环中按递减顺序打印出10到0之间的整数。
+
+
+## [练习1.11](1.11.cpp)
+
+> 编写程序，提示用户输入两个整数，打印出这两个整数所指定的范围内的所有整数。
+
+## 练习1.12
+
+> 下面的for循环完成了什么功能？sum的终值是多少？
+```
+int sum = 0;
+for (int i = -100; i <= 100; ++i)
+	sum += i;
+```
+
+从 -100 加到 100 ，sum 的终值为 0。
+
+## 练习1.13
+
+> 使用for循环重做1.4.1节中的所有练习（第11页）。
+
+1.9:
+```
+#include <iostream>
+
+int main()
+{
+    int sum = 0;
+    for (int i = 50; i <= 100; ++i) sum += i;
+    std::cout << "the sum is: " << sum << std::endl;
+
+    return 0;
+}
+```
+
+1.10:
+```
+#include <iostream>
+
+int main()
+{
+    for (int i = 10; i >= 0; --i)
+        std::cout << i << std::endl;
+    return 0;
+}
+```
+
+1.11:
+```
+#include <iostream>
+
+void  print_range(int lo, int hi)
+{
+	if (lo > hi)
+	{
+		print_range(hi, lo);
+		return;
+	}
+	for (int i = lo; i <= hi; ++i)
+	{
+		std::cout << i << std::endl;
+	}
+}
+
+int main()
+{
+	int low, high;
+	std::cout << "please input two numbers : " << std::endl;
+	std::cin >> low >> high;
+
+	print_range(low, high);
+	return 0;
+}
+```
