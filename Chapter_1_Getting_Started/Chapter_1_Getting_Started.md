@@ -145,3 +145,29 @@ int main()
 	return 0;
 }
 ```
+
+## 练习1.14
+
+> 对比for循环和while循环，两种形式的优缺点各是什么？
+
+[在Stack Overflow上面有与这个相似的问题](http://stackoverflow.com/questions/2950931/for-vs-while-in-c-programming)
+
+## 练习1.15
+
+> 编写程序，包含第14页“再探编译”中讨论的常见错误。熟悉编译器生成的错误信息。
+
+常见的错误有语法错误、类型错误、声明错误，这些都是编译器可以检查出的错误。
+
+## [练习1.16](1.16.cpp)
+
+> 编写程序，从cin读取一组数，输出其和。
+
+## 练习1.17
+
+> 如果输入的所有值都是相等的，本节的程序会输出什么？如果没有重复值，输出又会是怎样的？
+
+![练习1.17](https://github.com/huangmingchuan/Cpp_Primer_Answers/raw/master/data/exercise1_17.png)
+
+## [练习1.18](1.18.cpp)
+
+> 编译并运行本节的程序，给它输入全都相等的值。再次运行程序，输入没有重复的值。
