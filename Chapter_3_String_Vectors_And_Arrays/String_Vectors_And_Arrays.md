@@ -48,3 +48,57 @@
 > 分别用while循环和传统for循环重写第一题的程序，你觉得哪种形式更好呢？为什么？
 
 范围for语句更好，不直接操作索引，更简洁。
+
+## 练习3.9
+
+> 下面的程序有何作用？它合法吗？如果不合法？为什么？
+```cpp
+string s;
+cout << s[0] << endl;
+```
+
+不合法。使用下标访问空字符串是非法的行为。
+
+## [练习3.10](3.10.cpp)
+
+> 编写一段程序，读入一个包含标点符号的字符串，将标点符号去除后输出字符串剩余的部分。
+
+## 练习3.11
+
+> 下面的范围for语句合法吗？如果合法，c的类型是什么？
+```cpp
+const string s = "Keep out!";
+for(auto &c : s){ /* ... */ }
+```
+
+要根据for循环中的代码来看是否合法，c是string 对象中字符的引用，s是常量。因此如果for循环中的代码重新给c赋值就会非法，如果不改变c的值，那么合法。
+
+## 练习3.12
+
+> 下列vector对象的定义有不正确的吗？如果有，请指出来。对于正确的，描述其执行结果；对于不正确的，说明其错误的原因。
+```cpp
+vector<vector<int>> ivec;         // 在C++11当中合法
+vector<string> svec = ivec;       // 不合法，类型不一样
+vector<string> svec(10, "null");  // 合法
+```
+
+## 练习3.13
+
+> 下列的vector对象各包含多少个元素？这些元素的值分别是多少？
+```cpp
+vector<int> v1;         // size:0,  no values.
+vector<int> v2(10);     // size:10, value:0
+vector<int> v3(10, 42); // size:10, value:42
+vector<int> v4{ 10 };     // size:1,  value:10
+vector<int> v5{ 10, 42 }; // size:2,  value:10, 42
+vector<string> v6{ 10 };  // size:10, value:""
+vector<string> v7{ 10, "hi" };  // size:10, value:"hi"
+```
+
+## [练习3.14](3.14.cpp)
+
+> 编写一段程序，用cin读入一组整数并把它们存入一个vector对象。
+
+## [练习3.15](3.15.cpp)
+
+> 改写上题程序，不过这次读入的是字符串。
