@@ -282,3 +282,105 @@ cout << sizeof(p)/sizeof(*p) << endl;
 * (b) sizeof(p->mem[i])
 * (c) sizeof(a) < b
 * (d) sizeof(f())
+
+## 练习4.31
+
+> 本节的程序使用了前置版本的递增运算符和递减运算符，解释为什么要用前置版本而不用后置版本。要想使用后置版本的递增递减运算符需要做哪些改动？使用后置版本重写本节的程序。
+
+在4.5节（132页）已经说过了，**除非必须，否则不用递增递减运算符的后置版本**。在这里要使用后者版本的递增递减运算符不需要任何改动。
+
+## 练习4.32
+
+> 解释下面这个循环的含义。
+```cpp
+constexpr int size = 5;
+int ia[size] = { 1, 2, 3, 4, 5 };
+for (int *ptr = ia, ix = 0;
+    ix != size && ptr != ia+size;
+    ++ix, ++ptr) { /* ... */ }
+```  
+
+这个循环在遍历数组 ia，指针 ptr 和 整型 ix 都是起到一个循环计数的功能。
+
+## 练习4.33
+
+> 根据4.12节中的表说明下面这条表达式的含义。
+```cpp
+someValue ? ++x, ++y : --x, --y
+```
+
+逗号表达式的优先级是最低的。因此这条表达式也等于：
+```cpp
+(someValue ? ++x, ++y : --x), --y
+```
+如果 someValue的值为真，x 和 y 的值都自增并返回 y 值，然后丢弃 y 值，y递减并返回 y 值。如果 someValue的值为假，x 递减并返回 x 值，然后丢弃 x 值，y递减并返回 y 值。
+
+## 练习4.34
+
+> 根据本节给出的变量定义，说明在下面的表达式中奖发生什么样的类型转换：
+```cpp
+(a) if (fval)
+(b) dval = fval + ival;
+(c) dval + ival * cval;
+```
+需要注意每种运算符遵循的是左结合律还是右结合律。
+
+* (a) fval 转换为 bool 类型
+* (b) ival 转换为 float ，相加的结果转换为 double
+* (c) cval 转换为 int，然后相乘的结果转换为 double
+
+## 练习4.35
+
+> 假设有如下的定义：
+```cpp
+char cval;
+int ival;
+unsigned int ui;
+float fval;
+double dval;
+```
+请回答在下面的表达式中发生了隐式类型转换吗？如果有，指出来。
+```cpp
+(a) cval = 'a' + 3;
+(b) fval = ui - ival * 1.0;
+(c) dval = ui * fval;
+(d) cval = ival + fval + dval;
+```
+
+* (a) 'a' 转换为 int ，然后与 3 相加的结果转换为 char
+* (b) ival 转换为 double，ui 转换为 double，结果转换为 float
+* (c) ui 转换为 float，结果转换为 double
+* (d) ival 转换为 float，与fval相加后的结果转换为 double，最后的结果转换为char
+
+## 练习4.36
+
+> 假设 i 是int类型，d 是double类型，书写表达式 i*=d 使其执行整数类型的乘法而非浮点类型的乘法。
+
+```cpp
+i *= static_cast<int>(d);
+```
+
+## 练习4.37
+
+> 用命名的强制类型转换改写下列旧式的转换语句。
+```cpp
+int i; double d; const string *ps; char *pc; void *pv;
+(a) pv = (void*)ps;
+(b) i = int(*pc);
+(c) pv = &d;
+(d) pc = (char*)pv;
+```
+
+* (a) pv = static_cast<void*>(const_cast<string*>(ps));
+* (b) i = static_cast<int>(*pc);
+* (c) pv = static_cast<void*>(&d);
+* (d) pc = static_cast<char*>(pv);
+
+## 练习4.38
+
+> 说明下面这条表达式的含义。
+```cpp
+double slope = static_cast<double>(j/i);
+```
+
+将 `j/i` 的结果值转换为 double，然后赋值给slope。 
