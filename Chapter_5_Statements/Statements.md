@@ -56,3 +56,44 @@ while (val <= 10)
 
 > 写一段自己的程序，使用if else 语句实现把数字转换为字母成绩的要求。
 
+## [练习5.6](5.6.cpp)
+
+> 改写上一题的程序，使用条件运算符代替if else语句。
+
+## 练习5.7
+
+> 改写下列代码段中的错误。
+```cpp
+(a) if (ival1 != ival2) 
+		ival1 = ival2
+    else 
+    	ival1 = ival2 = 0;
+(b) if (ival < minval) 
+		minval = ival;
+    	occurs = 1;
+(c) if (int ival = get_value())
+    	cout << "ival = " << ival << endl;
+    if (!ival)
+    	cout << "ival = 0\n";
+(d) if (ival = 0)
+    	ival = get_value();
+```
+
+* (a) `ival1 = ival2` 后面少了分号。
+* (b) 应该用花括号括起来。
+* (c) `if (!ival)` 应该改为 `else`。
+* (d) `if (ival = 0)` 应该改为 `if (ival == 0)`。
+
+## 练习5.8
+
+> 什么是“悬垂else”？C++语言是如何处理else子句的？
+
+C++语言规定else与它最近的尚未匹配的if匹配。
+
+## [练习5.9](5.9.cpp)
+
+> 编写一段程序，使用一系列if语句统计从cin读入的文本中有多少元音字母。
+
+## [练习5.10](5.10.cpp)
+
+> 我们之前实现的统计元音字母的程序存在一个问题：如果元音字母以大写形式出现，不会被统计在内。编写一段程序，既统计元音字母的小写形式，也统计元音字母的大写形式，也就是说，新程序遇到'a'和'A'都应该递增 aCnt 的值，以此类推。
