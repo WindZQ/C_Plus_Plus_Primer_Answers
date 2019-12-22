@@ -97,3 +97,144 @@ C++语言规定else与它最近的尚未匹配的if匹配。
 ## [练习5.10](5.10.cpp)
 
 > 我们之前实现的统计元音字母的程序存在一个问题：如果元音字母以大写形式出现，不会被统计在内。编写一段程序，既统计元音字母的小写形式，也统计元音字母的大写形式，也就是说，新程序遇到'a'和'A'都应该递增 aCnt 的值，以此类推。
+
+## [练习5.11](5.11.cpp)
+
+> 修改统计元音字母的程序，使其也能统计空格、制表符、和换行符的数量。
+
+## [练习5.12](5.12.cpp)
+
+> 修改统计元音字母的程序，使其能统计含以下两个字符的字符序列的数量： ff、fl和fi。
+
+## 练习5.13
+
+> 下面显示的每个程序都含有一个常见的编码错误，指出错误在哪里，然后修改它们。
+```cpp
+(a) unsigned aCnt = 0, eCnt = 0, iouCnt = 0;
+    char ch = next_text();
+    switch (ch) {
+        case 'a': aCnt++;
+        case 'e': eCnt++;
+        default: iouCnt++;
+    }
+(b) unsigned index = some_value();
+    switch (index) {
+        case 1:
+            int ix = get_value();
+            ivec[ ix ] = index;
+            break;
+        default:
+            ix = ivec.size()-1;
+            ivec[ ix ] = index;
+    }
+(c) unsigned evenCnt = 0, oddCnt = 0;
+    int digit = get_num() % 10;
+    switch (digit) {
+        case 1, 3, 5, 7, 9:
+            oddcnt++;
+            break;
+        case 2, 4, 6, 8, 10:
+            evencnt++;
+            break;
+    }
+(d) unsigned ival=512, jval=1024, kval=4096;
+    unsigned bufsize;
+    unsigned swt = get_bufCnt();
+    switch(swt) {
+        case ival:
+            bufsize = ival * sizeof(int);
+            break;
+        case jval:
+            bufsize = jval * sizeof(int);
+            break;
+        case kval:
+            bufsize = kval * sizeof(int);
+            break;
+    }
+```
+
+* (a) 少了 break语句。应该为：
+```cpp
+	unsigned aCnt = 0, eCnt = 0, iouCnt = 0;
+    char ch = next_text();
+    switch (ch) {
+    	case 'a': aCnt++; break;
+    	case 'e': eCnt++; break;
+    	default: iouCnt++; break;
+    }
+```
+* (b) 在 default 分支当中，ix 未定义。应该在外部定义ix。
+```cpp
+    unsigned index = some_value();
+    int ix;
+    switch (index) {
+        case 1:
+            ix = get_value();
+            ivec[ ix ] = index;
+            break;
+        default:
+            ix = static_cast<int>(ivec.size())-1;
+            ivec[ ix ] = index;
+    }
+```
+* (c) case 后面应该用冒号而不是逗号。
+```cpp
+    unsigned evenCnt = 0, oddCnt = 0;
+    int digit = get_num() % 10;
+    switch (digit) {
+        case 1: case 3: case 5: case 7: case 9:
+            oddcnt++;
+            break;
+        case 2: case 4: case 6: case 8: case 0:
+            evencnt++;
+            break;
+    }
+```
+* (d) case 标签必须是整型常量表达式。
+```cpp
+    const unsigned ival=512, jval=1024, kval=4096;
+    unsigned bufsize;
+    unsigned swt = get_bufCnt();
+    switch(swt) {
+        case ival:
+            bufsize = ival * sizeof(int);
+            break;
+        case jval:
+            bufsize = jval * sizeof(int);
+            break;
+        case kval:
+            bufsize = kval * sizeof(int);
+            break;
+    }
+```
+
+# [练习5.14](5.14.cpp)
+
+> 编写一段程序，从标准输入中读取若干string对象并查找连续重复出现的单词，所谓连续重复出现的意思是：一个单词后面紧跟着这个单词本身。要求记录连续重复出现的最大次数以及对应的单词。如果这样的单词存在，输出重复出现的最大次数；如果不存在，输出一条信息说明任何单词都没有连续出现过。例如：如果输入是：
+```
+how now now now brown cow cow
+```
+那么输出应该表明单词now连续出现了3次。
+
+## 练习5.15
+
+> 说明下列循环的含义并改正其中的错误。
+```cpp
+(a) for (int ix = 0; ix != sz; ++ix) { /* ... */ }
+    if (ix != sz)
+    	// . . .
+(b) int ix;
+    for (ix != sz; ++ix) { /* ... */ }
+(c) for (int ix = 0; ix != sz; ++ix, ++sz) { /*...*/ }
+```
+
+应该改为下面这样：
+```cpp
+(a) int ix;
+    for (ix = 0; ix != sz; ++ix)  { /* ... */ }
+    if (ix != sz)
+    // . . .
+(b) int ix;
+    for (; ix != sz; ++ix) { /* ... */ }
+(c) for (int ix = 0; ix != sz; ++ix) { /*...*/ }
+```
