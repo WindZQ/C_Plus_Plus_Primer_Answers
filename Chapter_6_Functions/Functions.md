@@ -323,3 +323,64 @@ if (val != 0)
 > 在调用factorial 函数时，为什么我们传入的值是 val-1 而非 val--？
 
 如果传入的值是 val--，那么将会永远传入相同的值来调用该函数，递归将永远不会结束。
+
+## 练习6.36
+
+> 编写一个函数声明，使其返回数组的引用并且该数组包含10个string对象。不用使用尾置返回类型、decltype或者类型别名。
+
+```cpp
+string (&fun())[10];
+```
+
+## 练习6.37
+
+> 为上一题的函数再写三个声明，一个使用类型别名，另一个使用尾置返回类型，最后一个使用decltype关键字。你觉得哪种形式最好？为什么？
+
+```cpp
+typedef string str_arr[10];
+str_arr& fun();
+
+auto fun()->string(&)[10];
+
+string s[10];
+decltype(s)& fun();
+```
+我觉得尾置返回类型最好。
+
+## 练习6.38
+
+> 修改arrPtr函数，使其返回数组的引用。
+
+```cpp
+decltype(odd)& arrPtr(int i)
+{
+    return (i % 2) ? odd : even;
+}
+```
+
+## 练习6.39
+
+> 说明在下面的每组声明中第二条语句是何含义。如果有非法的声明，请指出来。
+```cpp
+(a) int calc(int, int);
+	int calc(const int, const int);
+(b) int get();
+	double get();
+(c) int *reset(int *);
+	double *reset(double *);
+```
+
+* (a) 非法。因为顶层const 不影响传入函数的对象，所以第二个声明无法与第一个声明区分开来。
+* (b) 非法。对于重载的函数来说，它们应该只有形参的数量和形参的类型不同。返回值与重载无关。
+* (c) 合法。
+
+## 练习6.40
+
+> 下面的哪个声明是错误的？为什么？
+```cpp
+(a) int ff(int a, int b = 0, int c = 0);
+(b) char *init(int ht = 24, int wd, char bckgrnd);		
+```
+
+* (a) 正确。
+* (b) 错误。因为一旦某个形参被赋予了默认值，那么它之后的形参都必须要有默认值。
