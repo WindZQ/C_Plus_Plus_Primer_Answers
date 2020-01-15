@@ -339,3 +339,66 @@ private:
     std::string pubdate_;
 };
 ```
+
+## 练习7.41 : [头文件](7,41.h) | [源文件](7.41.cpp) | [主函数](7.41.main.cpp)
+
+> 使用委托构造函数重新编写你的Sales_data 类，给每个构造函数体添加一条语句，令其一旦执行就打印一条信息。用各种可能的方式分别创建 Sales_data 对象，认真研究每次输出的信息直到你确实理解了委托构造函数的执行顺序。
+
+## 练习7.42
+
+> 对于你在练习7.40中编写的类，确定哪些构造函数可以使用委托。如果可以的话，编写委托构造函数。如果不可以，从抽象概念列表中重新选择一个你认为可以使用委托构造函数的，为挑选出的这个概念编写类定义。
+
+```cpp
+class Book 
+{
+public:
+    Book(unsigned isbn, std::string const& name, std::string const& author, std::string const& pubdate)
+        :isbn_(isbn), name_(name), author_(author), pubdate_(pubdate)
+    { }
+
+    Book(unsigned isbn) : Book(isbn, "", "", "") {}
+
+    explicit Book(std::istream &in) 
+    { 
+        in >> isbn_ >> name_ >> author_ >> pubdate_;
+    }
+
+private:
+    unsigned isbn_;
+    std::string name_;
+    std::string author_;
+    std::string pubdate_;
+};
+```
+
+## 练习7.43
+
+> 假定有一个名为 NoDefault 的类，它有一个接受 int 的构造函数，但是没有默认构造函数。定义类 C，C 有一个 NoDefault 类型的成员，定义C 的默认构造函数。
+
+```cpp
+class NoDefault {
+public:
+    NoDefault(int i) { }
+};
+
+class C {
+public:
+    C() : def(0) { } 
+private:
+    NoDefault def;
+};
+```
+
+## 练习7.44
+
+> 下面这条声明合法吗？如果不，为什么？
+```cpp
+vector<NoDefault> vec(10);
+```
+
+不合法。因为 NoDefault 没有默认构造函数。
+
+## 练习7.45
+
+> 如果在上一个练习中定义的vector的元素类型是C，则声明合法吗？为什么？
+
