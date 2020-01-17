@@ -402,3 +402,62 @@ vector<NoDefault> vec(10);
 
 > 如果在上一个练习中定义的vector的元素类型是C，则声明合法吗？为什么？
 
+合法。因为 `C` 有默认构造函数。
+
+## 练习7.46
+
+> 下面哪些论断是不正确的？为什么？
+```cpp
+(a) 一个类必须至少提供一个构造函数。
+(b) 默认构造函数是参数列表为空的构造函数。
+(c) 如果对于类来说不存在有意义的默认值，则类不应该提供默认构造函数。
+(d) 如果类没有定义默认构造函数，则编译器将为其生成一个并把每个数据成员初始化成相应类型的默认值。
+```
+
+* (a) 不正确。如果我们的类没有显式地定义构造函数，那么编译器就会为我们隐式地定义一个默认构造函数，并称之为**合成的默认构造函数**。
+* (b) 不完全正确。为每个参数都提供了默认值的构造函数也是默认构造函数。
+* (c) 不正确。哪怕没有意义的值也需要初始化。
+* (d) 不正确。只有当一个类没有定义任何构造函数的时候，编译器才会生成一个默认构造函数。
+
+## 练习7.47
+
+> 说明接受一个string 参数的Sales_data构造函数是否应该是explicit的，并解释这样做的优缺点。
+
+是否需要从 string 到 Sales_data 的转换依赖于我们对用户使用该转换的看法。在此例中，这种转换可能是对的。null_book 中的 string 可能表示了一个不存在的 ISBN 编号。
+
+优点：
+* 可以抑制构造函数定义的隐式转换
+
+缺点：
+* 为了转换要显式地使用构造函数
+
+## 练习7.48
+
+> 假定Sales_data 的构造函数不是explicit的，则下述定义将执行什么样的操作？
+```cpp
+string null_isbn("9-999-9999-9");
+Sales_data item1(null_isbn);
+Sales_data item2("9-999-99999-9");
+```
+
+这些定义和是不是 explicit 的无关。
+
+## 练习7.49
+
+> 对于combine 函数的三种不同声明，当我们调用i.combine(s) 时分别发生什么情况？其中 i 是一个 Sales_data，而 s 是一个string对象。
+
+```cpp
+(a) Sales_data &combine(Sales_data); // ok
+(b) Sales_data &combine(Sales_data&); // error C2664: 无法将参数 1 从“std::string”转换为“Sales_data &”	
+(c) Sales_data &combine(const Sales_data&) const; // 该成员函数是const 的，意味着不能改变对象。而 combine函数的本意就是要改变对象
+```
+
+## 练习7.50
+
+> 确定在你的Person 类中是否有一些构造函数应该是 explicit 的。
+
+```cpp
+explicit Person(std::istream &is){ read(is, *this); }
+```
+
+
