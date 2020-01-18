@@ -460,4 +460,71 @@ Sales_data item2("9-999-99999-9");
 explicit Person(std::istream &is){ read(is, *this); }
 ```
 
+## 练习7.51
+
+> vector 将其单参数的构造函数定义成 explicit 的，而string则不是，你觉得原因何在？
+
+假如我们有一个这样的函数：
+```cpp
+int getSize(const std::vector<int>&);
+```
+如果vector没有将单参数构造函数定义成 explicit 的，我们就可以这样调用：
+```cpp
+getSize(34);
+```
+很明显这样调用会让人困惑，函数实际上会初始化一个拥有34个元素的vector的临时量，然后返回34。但是这样没有任何意义。而 string 则不同，string 的单参数构造函数的参数是 const char * ，因此凡是在需要用到 string 的地方都可以用 const char * 来代替（字面值就是 const char *）。如：
+```cpp
+void print(std::string);
+print("hello world");
+```
+
+## 练习7.52
+
+> 使用2.6.1节的 Sales_data 类，解释下面的初始化过程。如果存在问题，尝试修改它。
+```cpp
+	Sales_data item = {"987-0590353403", 25, 15.99};
+```
+
+Sales_data 类不是聚合类，应该修改成如下：
+```cpp
+struct Sales_data {
+    std::string bookNo;
+    unsigned units_sold;
+    double revenue;
+};
+```
+
+## 练习7.53
+
+> 定义你自己的 Debug。
+
+```cpp
+class Debug {
+public:
+    constexpr Debug(bool b = true) : hw(b), io(b), other(b) { }
+    constexpr Debug(bool h, bool i, bool o) : hw(r), io(i), other(0) { }
+
+    constexpr bool any() { return hw || io || other; }
+    void set_hw(bool b) { hw = b; }
+    void set_io(bool b) { io = b; }
+    void set_other(bool b) { other = b; }
+    
+private:
+    bool hw;        // runtime error
+    bool io;        // I/O error
+    bool other;     // the others
+};
+```
+
+## 练习7.54
+> Debug中以 set_ 开头的成员应该被声明成 constexpr 吗？如果不，为什么？
+
+不能。constexpr 函数必须包含一个返回语句。
+
+## 练习7.55
+
+> 7.5.5节的 Data 类是字面值常量类吗？请解释原因。
+
+不是。因为 std::string 不是字面值类型。 
+
 
