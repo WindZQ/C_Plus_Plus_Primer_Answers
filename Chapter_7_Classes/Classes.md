@@ -527,4 +527,62 @@ private:
 
 不是。因为 std::string 不是字面值类型。 
 
+## 练习7.56
 
+> 什么是类的静态成员？它有何优点？静态成员与普通成员有何区别？
+
+与类本身相关，而不是与类的各个对象相关的成员是静态成员。静态成员能用于某些场景，而普通成员不能。
+
+## 练习7.57
+
+> 编写你自己的 Account 类。
+
+```cpp
+class Account {
+public:
+    void calculate() { amount += amount * interestRate; }
+    static double rate() { return interestRate; }
+    static void rate(double newRate) { interestRate = newRate; }
+    
+private:
+    std::string owner;
+    double amount;
+    static double interestRate;
+    static constexpr double todayRate = 42.42;
+    static double initRate() { return todayRate; }
+};
+
+double Account::interestRate = initRate();
+```
+
+## 练习7.58
+
+> 下面的静态数据成员的声明和定义有错误吗？请解释原因。
+```cpp
+//example.h
+class Example {
+public:
+	static double rate = 6.5;
+	static const int vecSize = 20;
+	static vector<double> vec(vecSize);
+};
+//example.c
+#include "example.h"
+double Example::rate;
+vector<double> Example::vec;
+```
+
+rate 应该是一个常量表达式。而类内只能初始化整型类型的静态常量，所以不能在类内初始化vec。修改后如下：
+```cpp
+// example.h
+class Example {
+public:
+    static constexpr double rate = 6.5;
+    static const int vecSize = 20;
+    static vector<double> vec;
+};
+
+// example.C
+#include "example.h"
+constexpr double Example::rate;
+vector<double> Example::vec(Example::vecSize);
