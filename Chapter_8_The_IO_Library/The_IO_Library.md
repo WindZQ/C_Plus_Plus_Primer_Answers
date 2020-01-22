@@ -79,3 +79,24 @@ void ReadFileToVec(const string& fileName, vector<string>& vec)
 ## [练习8.10](8.10.cpp)
 
 > 编写程序，将来自一个文件中的行保存在一个vector<string>中。然后使用一个istringstream从vector读取数据元素，每次读取一个单词。
+
+## [练习8.11](8.11.cpp)
+
+> 本节的程序在外层while循环中定义了istringstream 对象。如果record 对象定义在循环之外，你需要对程序进行怎样的修改？重写程序，将record的定义移到while 循环之外，验证你设想的修改方法是否正确。
+
+## 练习8.12
+
+> 我们为什么没有在PersonInfo中使用类内初始化？
+
+因为这里只需要聚合类就够了，所以没有必要在 PersionInfo 中使用类内初始化。
+
+## [练习8.13](8.13.cpp)
+
+> 重写本节的电话号码程序，从一个命名文件而非cin读取数据。
+
+## 练习8.14
+
+> 我们为什么将entry和nums定义为 const auto& ？
+
+* 它们都是类类型，因此使用引用避免拷贝。
+* 在循环当中不会改变它们的值，因此用 const。
