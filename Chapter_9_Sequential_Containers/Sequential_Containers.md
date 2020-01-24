@@ -57,3 +57,64 @@ vector<int>::const_iterator find(vector<int>::const_iterator begin, vector<int>:
     return end;
 }
 ```
+
+## 练习9.6
+
+> 下面的程序有何错误？你应该如何修改它？
+```cpp
+list<int> lst1;
+list<int>::iterator iter1 = lst1.begin(),
+					iter2 = lst1.end();
+while (iter1 < iter2) /* ... */
+```
+
+修改成如下：
+```cpp
+while (iter1 != iter2)
+```
+
+## 练习9.7
+
+> 为了索引int 的 vector中的元素，应该使用什么类型？
+
+```cpp
+vector<int>::size_type
+```
+
+## 练习9.8
+
+> 为了读取string 的list 中的元素，应该使用什么类型？如果写入list，又应该使用什么类型？
+
+```cpp
+list<string>::const_iterator // 读
+list<string>::iterator // 写
+```
+
+## 练习9.9
+
+> begin 和 cbegin 两个函数有什么不同？
+
+`begin` 返回的是普通迭代器，`cbegin` 返回的是常量迭代器。
+
+## 练习9.10
+
+> 下面4个对象分别是什么类型？
+```cpp
+vector<int> v1;
+const vector<int> v2;
+auto it1 = v1.begin(), it2 = v2.begin();
+auto it3 = v1.cbegin(), it4 = v2.cbegin();
+```
+
+这里的代码在 VS2013 下是有错误的。
+* 错误	1	error C3538: 在声明符列表中，“auto”必须始终推导为同一类型	
+因此代码要改为
+
+```cpp
+auto it1 = v1.begin();
+auto it2 = v2.begin(), it3 = v1.cbegin(), it4 = v2.cbegin();
+```
+
+`it1` 是 `vector<int>::iterator`
+
+`it2`，`it3` 和 `it4` 是 `vector<int>::const_iterator`
