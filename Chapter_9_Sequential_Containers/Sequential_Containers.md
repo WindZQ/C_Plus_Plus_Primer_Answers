@@ -118,3 +118,59 @@ auto it2 = v2.begin(), it3 = v1.cbegin(), it4 = v2.cbegin();
 `it1` 是 `vector<int>::iterator`
 
 `it2`，`it3` 和 `it4` 是 `vector<int>::const_iterator`
+
+
+## 练习9.11
+
+> 对6种创建和初始化 vector 对象的方法，每一种都给出一个实例。解释每个vector包含什么值。
+
+```cpp
+vector<int> vec;    // 0
+vector<int> vec(10);    // 0
+vector<int> vec(10, 1);  // 1
+vector<int> vec{ 1, 2, 3, 4, 5 }; // 1, 2, 3, 4, 5
+vector<int> vec(other_vec); // 拷贝 other_vec 的元素
+vector<int> vec(other_vec.begin(), other_vec.end()); // 拷贝 other_vec 的元素
+```
+
+## 练习9.12
+
+> 对于接受一个容器创建其拷贝的构造函数，和接受两个迭代器创建拷贝的构造函数，解释它们的不同。
+
+* 接受一个容器创建其拷贝的构造函数，必须容器类型和元素类型都相同。
+* 接受两个迭代器创建拷贝的构造函数，只需要元素的类型能够相互转换，容器类型和元素类型可以不同。
+
+## [练习9.13](9.13.cpp)
+
+> 如何从一个list<int>初始化一个vector<double>？从一个vector<int>又该如何创建？编写代码验证你的答案。
+
+```cpp
+list<int> ilst(5, 4);
+vector<int> ivc(5, 5);
+
+vector<double> dvc(ilst.begin(), ilst.end());
+vector<double> dvc2(ivc.begin(), ivc.end());
+```
+
+## 练习9.14
+
+> 编写程序，将一个list中的char * 指针元素赋值给一个vector中的string。
+
+```cpp
+    std::list<const char*> l{ "hello", "world" };
+    std::vector<std::string> v;
+    v.assign(l.cbegin(), l.cend());
+```
+
+## 练习9.15
+
+> 编写程序，判定两个vector<int>是否相等。
+
+```cpp
+    std::vector<int> vec1{ 1, 2, 3, 4, 5 };
+    std::vector<int> vec2{ 1, 2, 3, 4, 5 };
+    std::vector<int> vec3{ 1, 2, 3, 4 };
+
+    std::cout << (vec1 == vec2 ? "true" : "false") << std::endl;
+    std::cout << (vec1 == vec3 ? "true" : "false") << std::endl;
+```
