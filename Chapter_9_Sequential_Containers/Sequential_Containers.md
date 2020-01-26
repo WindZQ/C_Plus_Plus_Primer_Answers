@@ -174,3 +174,45 @@ vector<double> dvc2(ivc.begin(), ivc.end());
     std::cout << (vec1 == vec2 ? "true" : "false") << std::endl;
     std::cout << (vec1 == vec3 ? "true" : "false") << std::endl;
 ```
+
+## 练习9.16
+
+> 重写上一题的程序，比较一个list<int>中的元素和一个vector<int>中的元素。
+
+```cpp
+    std::list<int>      li{ 1, 2, 3, 4, 5 };
+    std::vector<int>    vec2{ 1, 2, 3, 4, 5 };
+    std::vector<int>    vec3{ 1, 2, 3, 4 };
+
+    std::cout << (std::vector<int>(li.begin(), li.end()) == vec2 ? "true" : "false") << std::endl;
+    std::cout << (std::vector<int>(li.begin(), li.end()) == vec3 ? "true" : "false") << std::endl;
+```
+
+## 练习9.17
+
+> 假定c1 和 c2 是两个容器，下面的比较操作有何限制？
+```cpp
+	if (c1 < c2)
+```
+
+* c1 和 c2 必须是相同类型的容器并且保存相同类型的元素
+* 元素类型要支持关系运算符
+
+## [练习9.18](9.18.cpp)
+
+> 编写程序，从标准输入读取string序列，存入一个deque中。编写一个循环，用迭代器打印deque中的元素。
+
+## 练习9.19
+
+> 重写上一题的程序，用list替代deque。列出程序要做出哪些改变。
+
+只需要在声明上做出改变即可，其他都不变。
+```cpp
+deque<string> input; 
+//改为
+list<string> input;
+```
+
+## [练习9.20](9.20.cpp)
+
+> 编写程序，从一个list<int>拷贝元素到两个deque中。值为偶数的所有元素都拷贝到一个deque中，而奇数值元素都拷贝到另一个deque中。
