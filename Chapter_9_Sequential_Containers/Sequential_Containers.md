@@ -216,3 +216,55 @@ list<string> input;
 ## [练习9.20](9.20.cpp)
 
 > 编写程序，从一个list<int>拷贝元素到两个deque中。值为偶数的所有元素都拷贝到一个deque中，而奇数值元素都拷贝到另一个deque中。
+
+## 练习9.21
+
+> 如果我们将第308页中使用 insert 返回值将元素添加到list中的循环程序改写为将元素插入到vector中，分析循环将如何工作。
+
+一样的。如书上所说：
+> 第一次调用 `insert` 会将我们刚刚读入的 `string` 插入到 `iter` 所指向的元素之前的位置。`insert` 返回的迭代器恰好指向这个新元素。我们将此迭代器赋予 `iter` 并重复循环，读取下一个单词。只要继续有单词读入，每步 while 循环就会将一个新元素插入到 `iter` 之前，并将 `iter` 改变为新加入元素的尾置。此元素为（新的）首元素。因此，每步循环将一个元素插入到 `list` 首元素之前的位置。
+
+## 练习9.22
+
+> 假定iv是一个int的vector，下面的程序存在什么错误？你将如何修改？
+```cpp
+vector<int>::iterator iter = iv.begin(),
+					  mid = iv.begin() + iv.size() / 2;
+while (iter != mid)
+	if (*iter == some_val)
+		iv.insert(iter, 2 * some_val);
+```
+
+* 循环不会结束
+* 迭代器可能会失效
+
+要改为下面这样：
+```cpp
+while (iter != mid)
+{
+	if (*iter == some_val)
+	{
+		iter = v.insert(iter, 2 * some_val);
+		++iter;
+    }
+	++iter;
+}
+```
+
+## 练习9.23
+
+> 在本节第一个程序中，若 c.size() 为1，则val、val2、val3和val4的值会是什么？
+
+都会是同一个值（容器中仅有的那个）。
+
+## [练习9.24](9.24.cpp)
+
+> 编写程序，分别使用 at、下标运算符、front 和 begin 提取一个vector中的第一个元素。在一个空vector上测试你的程序。
+
+## 练习9.25
+
+> 对于第312页中删除一个范围内的元素的程序，如果 elem1 与 elem2 相等会发生什么？如果 elem2 是尾后迭代器，或者 elem1 和 elem2 皆为尾后迭代器，又会发生什么？
+
+* 如果 elem1 和 elem2 相等，那么不会发生任何操作。
+* 如果elem2 是尾后迭代器，那么删除从 elem1 到最后的元素。
+* 如果两者皆为尾后迭代器，也什么都不会发生。
