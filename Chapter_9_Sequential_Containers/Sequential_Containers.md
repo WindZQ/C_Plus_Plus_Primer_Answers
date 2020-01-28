@@ -268,3 +268,68 @@ while (iter != mid)
 * 如果 elem1 和 elem2 相等，那么不会发生任何操作。
 * 如果elem2 是尾后迭代器，那么删除从 elem1 到最后的元素。
 * 如果两者皆为尾后迭代器，也什么都不会发生。
+
+
+## 练习9.26
+
+> 使用下面代码定义的ia，将ia 拷贝到一个vector和一个list中。是用单迭代器版本的erase从list中删除奇数元素，从vector中删除偶数元素。
+```cpp
+int ia[] = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 55, 89 };
+```
+
+```cpp
+vector<int> vec(ia, end(ia));
+list<int> lst(vec.begin(), vec.end());
+
+for (auto it = lst.begin(); it != lst.end(); )
+	if (*it & 0x1)
+		it = lst.erase(it);
+	else 
+		++it;
+
+for (auto it = vec.begin(); it != vec.end(); )
+	if (!(*it & 0x1))
+		it = vec.erase(it);
+	else
+		++it;			
+```
+
+## [练习9.27](9.27.cpp)
+
+> 编写程序，查找并删除forward_list<int>中的奇数元素。
+
+## 练习9.28
+
+> 编写函数，接受一个forward_list<string>和两个string共三个参数。函数应在链表中查找第一个string，并将第二个string插入到紧接着第一个string之后的位置。若第一个string未在链表中，则将第二个string插入到链表末尾。
+
+```cpp
+void find_and_insert(forward_list<string>& flst, const string& s1, const string& s2)
+{
+	auto prev = flst.before_begin();
+	auto curr = flst.begin();
+	while (curr != flst.end())
+	{
+		if (*curr == s1)
+		{
+			flst.insert_after(curr, s2);
+			return;
+	    }
+	    prev = curr;
+	    ++curr;
+    }
+    flst.insert_after(prev, s2);
+}
+```
+
+## 练习9.29
+
+> 假定vec包含25个元素，那么vec.resize(100)会做什么？如果接下来调用vec.resize(10)会做什么？
+
+* 将75个值为0的元素添加到vec的末尾
+* 从vec的末尾删除90个元素
+
+## 练习9.30
+
+> 接受单个参数的resize版本对元素类型有什么限制（如果有的话）？
+
+元素类型必须提供一个默认构造函数。
