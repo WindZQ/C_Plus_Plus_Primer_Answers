@@ -333,3 +333,59 @@ void find_and_insert(forward_list<string>& flst, const string& s1, const string&
 > 接受单个参数的resize版本对元素类型有什么限制（如果有的话）？
 
 元素类型必须提供一个默认构造函数。
+
+## 练习9.31
+
+> 第316页中删除偶数值元素并复制奇数值元素的程序不能用于list或forward_list。为什么？修改程序，使之也能用于这些类型。
+
+```cpp
+iter += 2;
+```
+因为复合赋值语句只能用于 string、vector、deque、array，所以要改为：
+```cpp
+++iter;
+++iter;
+```
+如果是forward_list的话，要增加一个首先迭代器 prev：
+```cpp
+auto prev = flst.before_begin();
+//...
+curr == flst.insert_after(prev, *curr);
+++curr; ++curr;
+++prev; ++prev;
+```
+
+## 练习9.32
+
+> 在第316页的程序中，向下面语句这样调用insert是否合法？如果不合法，为什么？
+```cpp
+iter = vi.insert(iter, *iter++);
+```
+
+不合法。因为参数的求值顺序是未指定的。
+
+## [练习9.33](9.33.cpp)
+
+> 在本节最后一个例子中，如果不将insert的结果赋予begin，将会发生什么？编写程序，去掉此赋值语句，验证你的答案。
+
+begin 将会失效。
+
+## [练习9.34](9.34.cpp)
+
+> 假定vi是一个保存int的容器，其中有偶数值也有奇数值，分析下面循环的行为，然后编写程序验证你的分析是否正确。
+```cpp
+iter = vi.begin();
+while (iter != vi.end())
+	if (*iter % 2)
+		iter = vi.insert(iter, *iter);
+	++iter;
+```
+
+循环永远不会结束。
+
+## 练习9.35
+
+> 解释一个vector的capacity和size有何区别。
+
+* capacity 的值表明，在不重新分配内存空间的情况下，容器可以保存多少元素
+* 而 size 的值是指容器已经保存的元素的数量
