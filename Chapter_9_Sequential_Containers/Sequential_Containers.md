@@ -389,3 +389,145 @@ while (iter != vi.end())
 
 * capacity 的值表明，在不重新分配内存空间的情况下，容器可以保存多少元素
 * 而 size 的值是指容器已经保存的元素的数量
+
+## 练习9.36
+
+> 一个容器的capacity可能小于它的size吗？
+
+不可能。
+
+## 练习9.37
+
+> 为什么list或array没有capacity成员函数？
+
+因为 list 是链表，而 array 不允许改变容器大小。
+
+## [练习9.38](9.38.cpp)
+
+> 编写程序，探究在你的标准实现中，vector是如何增长的。
+
+```
+capacity: 0  size: 0
+capacity: 1  size: 1
+capacity: 2  size: 2
+capacity: 3  size: 3
+capacity: 4  size: 4
+capacity: 6  size: 5
+capacity: 6  size: 6
+capacity: 9  size: 7
+capacity: 9  size: 8
+capacity: 9  size: 9
+capacity: 13  size: 10
+capacity: 13  size: 11
+capacity: 13  size: 12
+capacity: 13  size: 13
+capacity: 19  size: 14
+capacity: 19  size: 15
+capacity: 19  size: 16
+capacity: 19  size: 17
+capacity: 19  size: 18
+capacity: 19  size: 19
+capacity: 28  size: 20
+capacity: 28  size: 21
+capacity: 28  size: 22
+capacity: 28  size: 23
+capacity: 28  size: 24
+capacity: 28  size: 25
+capacity: 28  size: 26
+capacity: 28  size: 27
+capacity: 28  size: 28
+capacity: 42  size: 29
+capacity: 42  size: 30
+capacity: 42  size: 31
+capacity: 42  size: 32
+capacity: 42  size: 33
+capacity: 42  size: 34
+capacity: 42  size: 35
+capacity: 42  size: 36
+capacity: 42  size: 37
+capacity: 42  size: 38
+capacity: 42  size: 39
+capacity: 42  size: 40
+capacity: 42  size: 41
+capacity: 42  size: 42
+capacity: 63  size: 43
+capacity: 63  size: 44
+capacity: 63  size: 45
+capacity: 63  size: 46
+capacity: 63  size: 47
+capacity: 63  size: 48
+capacity: 63  size: 49
+capacity: 63  size: 50
+capacity: 63  size: 51
+capacity: 63  size: 52
+capacity: 63  size: 53
+capacity: 63  size: 54
+capacity: 63  size: 55
+capacity: 63  size: 56
+capacity: 63  size: 57
+capacity: 63  size: 58
+capacity: 63  size: 59
+capacity: 63  size: 60
+capacity: 63  size: 61
+capacity: 63  size: 62
+capacity: 63  size: 63
+capacity: 94  size: 64
+capacity: 94  size: 65
+capacity: 94  size: 66
+capacity: 94  size: 67
+capacity: 94  size: 68
+capacity: 94  size: 69
+capacity: 94  size: 70
+capacity: 94  size: 71
+capacity: 94  size: 72
+capacity: 94  size: 73
+capacity: 94  size: 74
+capacity: 94  size: 75
+capacity: 94  size: 76
+capacity: 94  size: 77
+capacity: 94  size: 78
+capacity: 94  size: 79
+capacity: 94  size: 80
+capacity: 94  size: 81
+capacity: 94  size: 82
+capacity: 94  size: 83
+capacity: 94  size: 84
+capacity: 94  size: 85
+capacity: 94  size: 86
+capacity: 94  size: 87
+capacity: 94  size: 88
+capacity: 94  size: 89
+capacity: 94  size: 90
+capacity: 94  size: 91
+capacity: 94  size: 92
+capacity: 94  size: 93
+capacity: 94  size: 94
+capacity: 141  size: 95
+capacity: 141  size: 96
+capacity: 141  size: 97
+capacity: 141  size: 98
+capacity: 141  size: 99
+请按任意键继续. . .
+```
+
+## 练习9.39
+
+> 解释下面程序片段做了什么：
+```cpp
+vector<string> svec;
+svec.reserve(1024);
+string word;
+while (cin >> word)
+	svec.push_back(word);
+svec.resize(svec.size() + svec.size() / 2);
+```
+
+定义一个 vector，为它分配1024个元素的空间。然后通过一个循环从标准输入中读取字符串并添加到vector当中。循环结束后，改变vector的容器大小（元素数量）为原来的1.5倍，使用元素的默认初始化值填充。如果容器的大小超过1024，vector也会重新分配空间以容纳新增的元素。
+
+## 练习9.40
+
+> 如果上一题的程序读入了256个词，在resize之后容器的capacity可能是多少？如果读入了512个、1000个、或1048个呢？
+
+* 如果读入了256个词，capacity 仍然是 1024
+* 如果读入了512个词，capacity 仍然是 1024
+* 如果读入了1000或1048个词，capacity 取决于具体实现。
