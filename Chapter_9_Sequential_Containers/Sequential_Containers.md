@@ -531,3 +531,30 @@ svec.resize(svec.size() + svec.size() / 2);
 * 如果读入了256个词，capacity 仍然是 1024
 * 如果读入了512个词，capacity 仍然是 1024
 * 如果读入了1000或1048个词，capacity 取决于具体实现。
+
+## 练习9.41
+
+> 编写程序，从一个vector<char>初始化一个string。
+
+```cpp
+    vector<char> v{ 'h', 'e', 'l', 'l', 'o' };
+    string str(v.cbegin(), v.cend());
+```
+
+## 练习9.42
+
+> 假定你希望每次读取一个字符存入一个string中，而且知道最少需要读取100个字符，应该如何提高程序的性能？
+
+使用 `reserve(100)` 函数预先分配100个元素的空间。
+
+## [练习9.43](9.43.cpp)
+
+> 编写一个函数，接受三个string参数是s、oldVal 和newVal。使用迭代器及insert和erase函数将s中所有oldVal替换为newVal。测试你的程序，用它替换通用的简写形式，如，将"tho"替换为"though",将"thru"替换为"through"。
+
+## [练习9.44](9.44.cpp)
+
+> 重写上一题的函数，这次使用一个下标和replace。
+
+## [练习9.45](9.45.cpp)
+
+> 编写一个函数，接受一个表示名字的string参数和两个分别表示前缀（如"Mr."或"Mrs."）和后缀（如"Jr."或"III"）的字符串。使用迭代器及insert和append函数将前缀和后缀添加到给定的名字中，将生成的新string返回。
