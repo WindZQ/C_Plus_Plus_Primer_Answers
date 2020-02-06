@@ -86,3 +86,23 @@ auto f = [](int i, int j) { return i + j; };
 int x = 10;
 auto f = [x](int i) { i + x; };
 ```
+
+## [练习10.16](10.16.cpp)
+
+> 使用 lambda 编写你自己版本的 biggies。
+
+## [练习10.17](10.17.cpp)
+
+> 重写10.3.1节练习10.12的程序，在对sort的调用中使用 lambda 来代替函数 compareIsbn。
+
+## [练习10.18](10.18.cpp)
+
+> 重写 biggies，用 partition 代替 find_if。我们在10.3.1节练习10.13中介绍了 partition 算法。
+
+## [练习10.19](10.19.cpp)
+
+> 用 stable_partition 重写前一题的程序，与 stable_sort 类似，在划分后的序列中维持原有元素的顺序。
+
+## [练习10.20](10.20.cpp)
+
+> 标准库定义了一个名为 count_if 的算法。类似 find_if，此函数接受一对迭代器，表示一个输入范围，还接受一个谓词，会对输入范围中每个元素执行。count_if返回一个计数值，表示谓词有多少次为真。使用count_if重写我们程序中统计有多少单词长度超过6的部分。
