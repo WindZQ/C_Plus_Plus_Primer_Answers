@@ -212,3 +212,22 @@ auto f = [x](int i) { i + x; };
 * copy 需要两个**输入迭代器**，一个**输出迭代器**
 * reverse 需要**双向迭代器**
 * unique需要**随机访问迭代器**
+
+## 练习10.41
+
+> 仅根据算法和参数的名字，描述下面每个标准库算法执行什么操作：
+```cpp
+replace(beg, end, old_val, new_val);
+replace_if(beg, end, pred, new_val);
+replace_copy(beg, end, dest, old_val, new_val);
+replace_copy_if(beg, end, dest, pred, new_val);
+```
+
+* `replace` 在两个迭代器范围内用新值替换所有原来的旧值。
+* `replace_if` 在两个迭代器范围内，满足谓词条件的元素用新值替换。
+* `replace_copy` 复制两个迭代器范围内的元素到目标迭代器位置，如果元素等于某个旧值，则用新值替换
+* `replace_copy_if` 复制两个迭代器范围内的元素到目标迭代器位置，满足谓词条件的元素用新值替换
+
+## [练习10.42](10.42.cpp)
+
+> 使用 list 代替 vector 重新实现10.2.3节中的去除重复单词的程序。
