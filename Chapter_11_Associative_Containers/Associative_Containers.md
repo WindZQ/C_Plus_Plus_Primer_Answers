@@ -64,3 +64,40 @@ std::map<std::string, std::list<std::size_t>> m;
 > 可以定义一个vector<int>::iterator 到 int 的map吗？list<int>::iterator 到 int 的map呢？对于两种情况，如果不能，解释为什么。
 
 可以定义 `vector<int>::iterator` 到 `int` 的map，但是不能定义 `list<int>::iterator` 到 `int` 的map。因为map的键必须实现 `<` 操作，list 的迭代器不支持比较运算。
+
+
+## 练习11.11
+
+> 不使用decltype 重新定义 bookstore。
+
+```cpp
+using Less = bool (*)(Sales_data const&, Sales_data const&);
+std::multiset<Sales_data, Less> bookstore(less);
+```
+
+## [练习11.12](11.12.cpp)
+
+> 编写程序，读入string和int的序列，将每个string和int存入一个pair 中，pair保存在一个vector中。
+
+## 练习11.13
+
+> 在上一题的程序中，至少有三种创建pair的方法。编写此程序的三个版本，分别采用不同的方法创建pair。解释你认为哪种形式最易于编写和理解，为什么？
+
+```cpp
+vec.push_back(std::make_pair(str, i));
+vec.push_back({ str, i });
+vec.push_back(std::pair<string, int>(str, i)); 
+```
+使用花括号的初始化器最易于理解和编写。
+
+## [练习11.14](11.14.cpp)
+
+> 扩展你在11.2.1节练习中编写的孩子姓达到名的map，添加一个pair的vector，保存孩子的名和生日。
+
+## 练习11.15
+
+> 对一个int到vector<int>的map，其mapped_type、key_type和 value_type分别是什么？
+
+* mapped_type : vector<int>
+* key_type : int
+* value_type : std::pair<const int,vector >
