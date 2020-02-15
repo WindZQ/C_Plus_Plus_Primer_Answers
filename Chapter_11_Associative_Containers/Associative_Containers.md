@@ -101,3 +101,48 @@ vec.push_back(std::pair<string, int>(str, i));
 * mapped_type : vector<int>
 * key_type : int
 * value_type : std::pair<const int,vector >
+
+## 练习11.16
+
+> 使用一个map迭代器编写一个表达式，将一个值赋予一个元素。
+
+```cpp
+std::map<int, string>::iterator it = m.begin();
+it->second = "hello";
+```
+
+## 练习11.17
+
+> 假定 c 是一个string的multiset，v 是一个string 的vector，解释下面的调用。指出每个调用是否合法：
+```cpp
+copy(v.begin(), v.end(), inserter(c, c.end()));
+copy(v.begin(), v.end(), back_inserter(c));
+copy(c.begin(), c.end(), inserter(v, v.end()));
+copy(c.begin(), c.end(), back_inserter(v));
+```
+
+第二个调用不合法，因为 multiset 没有 push_back 方法。其他调用都合法。
+
+## 练习11.18
+
+> 写出第382页循环中map_it 的类型，不要使用auto 或 decltype。
+
+```cpp
+map<string, size_t>::const_iterator map_it = word_count.cbegin();
+```
+
+## 练习11.19
+
+> 定义一个变量，通过对11.2.2节中的名为 bookstore 的multiset 调用begin()来初始化这个变量。写出变量的类型，不要使用auto 或 decltype。
+
+```cpp
+using compareType = bool (*)(const Sales_data &lhs, const Sales_data &rhs);
+std::multiset<Sales_data, compareType> bookstore(compareIsbn);
+std::multiset<Sales_data, compareType>::iterator c_it = bookstore.begin();
+```
+
+## [练习11.20](11.20.cpp)
+
+> 重写11.1节练习的单词计数程序，使用insert代替下标操作。你认为哪个程序更容易编写和阅读？解释原因。
+
+使用 insert 更容易阅读和编写。insert 有返回值，可以明确的体现出插入操作的结果。
