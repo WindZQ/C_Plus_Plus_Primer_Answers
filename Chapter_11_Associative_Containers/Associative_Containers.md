@@ -146,3 +146,55 @@ std::multiset<Sales_data, compareType>::iterator c_it = bookstore.begin();
 > 重写11.1节练习的单词计数程序，使用insert代替下标操作。你认为哪个程序更容易编写和阅读？解释原因。
 
 使用 insert 更容易阅读和编写。insert 有返回值，可以明确的体现出插入操作的结果。
+
+## 练习11.21
+
+> 假定word_count 是一个 string 到 size_t 的map，word 是一个string，解释下面循环的作用：
+```cpp
+while (cin >> word)
+	++word_count.insert({word, 0}).first->second;
+```
+
+这条语句等价于：
+```cpp
+while (cin >> word)
+{
+	auto result = word_count.insert({word, 0});
+	++(result.first->second);
+}
+```
+若insert成功：先添加一个元素，然后返回一个 pair，pair 的 first 元素是一个迭代器。这个迭代器指向刚刚添加的元素，这个元素是 pair ，然后递增 pair 的 second 成员。
+若insert失败：递增已有指定关键字的元素的 second 成员。
+
+## 练习11.22
+
+> 给定一个map<string, vector<int>>，对此容器的插入一个元素的insert版本，写出其参数类型和返回类型。
+
+```cpp
+std::pair<std::string, std::vector<int>>    // 参数类型
+std::pair<std::map<std::string, std::vector<int>>::iterator, bool> // 返回类型
+```
+
+## [练习11.23](11.23.cpp)
+
+> 11.2.1节练习中的map 以孩子的姓为关键字，保存他们的名的vector，用multimap 重写此map。
+
+## 练习11.24
+
+> 下面的程序完成什么功能？
+```cpp
+map<int, int> m;
+m[0] = 1;
+```
+
+添加一个元素到 map 中，如果该键存在，则重新赋值。
+
+## 练习11.25
+
+> 对比下面的程序与上一题程序
+```cpp
+vector<int> v;
+v[0] = 1;
+```
+
+未定义行为，vector 的下标越界访问。
