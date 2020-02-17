@@ -198,3 +198,40 @@ v[0] = 1;
 ```
 
 未定义行为，vector 的下标越界访问。
+
+## 练习11.26
+
+> 可以用什么类型来对一个map进行下标操作？下标运算符返回的类型是什么？请给出一个具体例子——即，定义一个map，然后写出一个可以用来对map进行下标操作的类型以及下标运算符将会返会的类型。
+
+```cpp
+std::map<int, std::string> m = { { 1,"ss" },{ 2,"sz" } };
+using KeyType = std::map<int, std::string>::key_type;	
+using ReturnType = std::map<int, std::string>::mapped_type;
+```
+
+## 练习11.27
+
+> 对于什么问题你会使用count来解决？什么时候你又会选择find呢？
+
+对于允许重复关键字的容器，应该用 count ; 对于不允许重复关键字的容器，应该用 find 。
+
+## 练习11.28
+
+> 对一个string到int的vector的map，定义并初始化一个变量来保存在其上调用find所返回的结果。
+
+```cpp
+map<string, vector<int>> m;
+map<string, vector<int>>::iterator it = m.find("key");
+```
+
+## 练习11.29
+
+> 如果给定的关键字不在容器中，upper_bound、lower_bound 和 equal_range 分别会返回什么？
+
+如果给定的关键字不在容器中，则 lower_bound和 upper_bound 会返回相等的迭代器，指向一个不影响排序的关键字插入位置。而equal_range 会返回一个 pair，pair 中的两个迭代器都指向关键字可以插入的位置。
+
+## 练习11.30
+
+> 对于本节最后一个程序中的输出表达式，解释运算对象pos.first->second的含义。
+
+pos 是一个 pair，pos.first 是一个迭代器，指向匹配关键字的元素，该元素是一个 pair，访问该元素的第二个成员。
