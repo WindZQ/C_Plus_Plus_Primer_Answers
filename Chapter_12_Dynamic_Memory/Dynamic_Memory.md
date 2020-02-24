@@ -162,3 +162,40 @@ release 成员的作用是放弃控制权并返回指针，因为在某一时刻
 ## [练习12.20](12.20.cpp)
 
 > 编写程序，逐行读入一个输入文件，将内容存入一个 StrBlob 中，用一个 StrBlobPtr 打印出 StrBlob 中的每个元素。
+
+## 练习12.21
+
+> 也可以这样编写 StrBlobPtr 的 deref 成员：
+```cpp
+std::string& deref() const {
+	return (*check(curr, "dereference past end"))[curr];
+}
+```
+你认为哪个版本更好？为什么？
+
+原来的版本更好，可读性更高。
+
+## 练习12.22
+
+> 为了能让 StrBlobPtr 使用 const StrBlob，你觉得应该如何修改？定义一个名为ConstStrBlobPtr 的类，使其能够指向 const StrBlob。
+
+构造函数改为接受 `const Strblob &` , 然后给 Strblob 类添加两个 const 成员函数 cbegin 和 cend，返回 ConstStrBlobPtr。
+
+## [练习12.23](12.23.cpp)
+
+> 编写一个程序，连接两个字符串字面常量，将结果保存在一个动态分配的char数组中。重写这个程序，连接两个标准库string对象。
+
+## [练习12.24](12.24.cpp)
+
+> 编写一个程序，从标准输入读取一个字符串，存入一个动态分配的字符数组中。描述你的程序如何处理变长输入。测试你的程序，输入一个超出你分配的数组长度的字符串。
+
+## 练习12.25
+
+> 给定下面的new表达式，你应该如何释放pa？
+```cpp
+int *pa = new int[10];
+```
+
+```cpp
+delete [] pa;
+```
