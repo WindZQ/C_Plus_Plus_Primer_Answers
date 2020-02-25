@@ -199,3 +199,33 @@ int *pa = new int[10];
 ```cpp
 delete [] pa;
 ```
+
+## [练习12.26](12.26.cpp)
+
+> 用 allocator 重写第427页中的程序。
+
+## 练习12.27 : [头文件](exercise12_27.h) | [实现](12.27.cpp) | [主函数](12.27.main.cpp)
+
+> TextQuery 和 QueryResult 类只使用了我们已经介绍过的语言和标准库特性。不要提前看后续章节内容，只用已经学到的知识对这两个类编写你自己的版本。
+
+## [练习12.28](12.28.cpp)
+
+> 编写程序实现文本查询，不要定义类来管理数据。你的程序应该接受一个文件，并与用户交互来查询单词。使用vector、map 和 set 容器来保存来自文件的数据并生成查询结果。
+
+## 练习12.29
+
+> 我们曾经用do while 循环来编写管理用户交互的循环。用do while 重写本节程序，解释你倾向于哪个版本，为什么？
+
+```cpp
+do {
+    std::cout << "enter word to look for, or q to quit: ";
+    string s;
+    if (!(std::cin >> s) || s == "q") break;
+    print(std::cout, tq.query(s)) << std::endl;
+} while ( true );
+```
+我更喜欢 while，这可能是习惯的问题。
+
+## 练习12.30 : [头文件](12.27.h) | [实现](12.27.cpp) | [主函数](12.27.main.cpp)
+
+> 定义你自己版本的 TextQuery 和 QueryResult 类，并执行12.3.1节中的runQueries 函数。
