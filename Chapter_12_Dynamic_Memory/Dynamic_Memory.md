@@ -229,3 +229,35 @@ do {
 ## 练习12.30 : [头文件](12.27.h) | [实现](12.27.cpp) | [主函数](12.27.main.cpp)
 
 > 定义你自己版本的 TextQuery 和 QueryResult 类，并执行12.3.1节中的runQueries 函数。
+
+## 练习12.31
+
+> 如果用vector 代替 set 保存行号，会有什么差别？哪个方法更好？为什么？
+
+如果用 vector 则会有单词重复的情况出现。而这里保存的是行号，不需要重复元素，所以 set 更好。
+
+## 练习12.32
+
+> 重写 TextQuery 和 QueryResult类，用StrBlob 代替 vector<string> 保存输入文件。
+
+TextQuery 和 QueryResult 类中的 file 成员，改为 指向 StrBlob 的智能指针。在访问 StrBlob 时，要使用 StrBlobPtr 。
+
+## 练习12.33
+
+> 在第15章中我们将扩展查询系统，在 QueryResult 类中将会需要一些额外的成员。添加名为 begin 和 end 的成员，返回一个迭代器，指向一个给定查询返回的行号的 set 中的位置。再添加一个名为 get_file 的成员，返回一个 shared_ptr，指向 QueryResult 对象中的文件。
+
+```cpp
+class QueryResult{
+public:
+	using Iter = std::set<line_no>::iterator;	
+	// ...
+	Iter begin() const { return lines->begin(); }
+	Iter end() const { return lines->end(); }
+	shared_ptr<std::vector<std::string>> get_file() const 
+	{ 
+		return std::make_shared<std::vector<std::string>>(file); 
+	}
+private:
+	// ...
+};
+```
