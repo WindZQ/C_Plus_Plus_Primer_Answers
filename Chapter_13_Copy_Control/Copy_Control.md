@@ -264,3 +264,39 @@ pravite:
 ## 练习13.40: [hpp](13.39.h) | [cpp](13.39.cpp)
 
 > 为你的 StrVec 类添加一个构造函数，它接受一个 initializer_list<string> 参数。
+
+
+
+## 练习13.41
+
+> 在 push_back 中，我们为什么在 construct 调用中使用后置递增运算？如果使用前置递增运算的话，会发生什么？
+
+会出现 `unconstructed`。
+
+## 练习13.42
+
+> 在你的 TextQuery 和 QueryResult 类中用你的 StrVec 类代替vector<string>，以此来测试你的 StrVec 类。
+
+## 练习13.43
+
+> 重写 free 成员，用 for_each 和 lambda 来代替 for 循环 destroy 元素。你更倾向于哪种实现，为什么？
+
+**重写**：
+```cpp
+for_each(elements, first_free, [this](std::string &rhs){ alloc.destroy(&rhs); });
+```
+更倾向于函数式写法。
+
+## 练习13.44
+
+> 编写标准库 string 类的简化版本，命名为 String。你的类应该至少有一个默认构造函数和一个接受 C 风格字符串指针参数的构造函数。使用 allocator 为你的 String类分配所需内存。
+
+[hpp](13.44.h) | [cpp](13.44.cpp) | [Test](13.44.main.cpp)
+
+## 练习13.45
+
+> 解释左值引用和右值引用的区别？
+
+定义：
+* 常规引用被称为左值引用
+* 绑定到右值的引用被称为右值引用。
