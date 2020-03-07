@@ -300,3 +300,51 @@ for_each(elements, first_free, [this](std::string &rhs){ alloc.destroy(&rhs); })
 定义：
 * 常规引用被称为左值引用
 * 绑定到右值的引用被称为右值引用。
+
+
+## 练习13.46
+
+> 什么类型的引用可以绑定到下面的初始化器上？
+```cpp
+int f();
+vector<int> vi(100);
+int? r1 = f();
+int? r2 = vi[0];
+int? r3 = r1;
+int? r4 = vi[0] * f();
+```
+
+```cpp
+int f();
+vector<int> vi(100);
+int&& r1 = f();
+int& r2 = vi[0];
+int& r3 = r1;
+int&& r4 = vi[0] * f();
+```
+
+## 练习13.47 : [hpp](13.44.h) | [cpp](13.44.cpp) 
+
+> 对你在练习13.44中定义的 String类，为它的拷贝构造函数和拷贝赋值运算符添加一条语句，在每次函数执行时打印一条信息。
+
+## [练习13.48](13.44.main.cpp)
+
+> 定义一个vector<String> 并在其上多次调用 push_back。运行你的程序，并观察 String 被拷贝了多少次。
+
+## 练习13.49
+
+> 为你的 StrVec、String 和 Message 类添加一个移动构造函数和一个移动赋值运算符。
+
+## 练习13.50
+
+> 在你的 String 类的移动操作中添加打印语句，并重新运行13.6.1节的练习13.48中的程序，它使用了一个vector<String>，观察什么时候会避免拷贝。
+
+```cpp
+String baz()
+{
+    String ret("world");
+    return ret; // first avoided
+}
+
+String s5 = baz(); // second avoided
+```
