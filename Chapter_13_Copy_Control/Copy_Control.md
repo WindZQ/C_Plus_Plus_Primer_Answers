@@ -348,3 +348,62 @@ String baz()
 
 String s5 = baz(); // second avoided
 ```
+
+## 练习13.51
+
+> 虽然 unique_ptr 不能拷贝，但我们在12.1.5节中编写了一个 clone 函数，它以值的方式返回一个 unique_ptr。解释为什么函数是合法的，以及为什么它能正确工作。
+
+在这里是移动的操作而不是拷贝操作，因此是合法的。
+
+## 练习13.52
+
+> 详细解释第478页中的 HasPtr 对象的赋值发生了什么？特别是，一步一步描述 hp、hp2 以及 HasPtr 的赋值运算符中的参数 rhs 的值发生了什么变化。
+
+左值被拷贝，右值被移动。
+
+## 练习13.53 : [hpp](13.53.h) | [cpp](13.53.cpp) 
+
+> 从底层效率的角度看，HasPtr 的赋值运算符并不理想，解释为什么？为 HasPtr 实现一个拷贝赋值运算符和一个移动赋值运算符，并比较你的新的移动赋值运算符中执行的操作和拷贝并交换版本中的执行的操作。
+
+## 练习13.54
+
+> 如果我们为 HasPtr 定义了移动赋值运算符，但未改变拷贝并交换运算符，会发生什么？编写代码验证你的答案。
+
+```cpp
+error: ambiguous overload for 'operator=' (operand types are 'HasPtr' and 'std::remove_reference<HasPtr&>::type { aka HasPtr }')
+hp1 = std::move(*pH);
+^
+```
+
+## 练习13.55
+
+> 为你的 StrBlob 添加一个右值引用版本的 push_back。
+
+```cpp
+void push_back(string &&s) { data->push_back(std::move(s)); }
+```
+
+## 练习13.56
+
+> 如果 sorted 定义如下，会发生什么？
+```cpp
+Foo Foo::sorted() const & {
+	Foo ret(*this);
+	return ret.sorted();
+}
+```
+
+会产生递归并且最终溢出。
+
+## 练习13.57
+
+> 如果 sorted定义如下，会发生什么：
+```cpp
+Foo Foo::sorted() const & { return Foo(*this).sorted(); }
+```
+
+没问题。会调用移动版本。
+
+## [练习13.58](13.58.cpp)
+
+> 编写新版本的 Foo 类，其 sorted 函数中有打印语句，测试这个类，来验证你对前两题的答案是否正确。
