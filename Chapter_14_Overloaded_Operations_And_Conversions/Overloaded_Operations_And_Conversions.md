@@ -179,3 +179,25 @@ istream& operator>>(istream& in, Sales_data& s)
 > 上题的这个类还需要定义其他赋值运算符吗？如果是，请实现它们；同时说明运算对象应该是什么类型并解释原因。
 
 是。如上题。
+
+## 练习14.26
+
+> 为你的 StrBlob 类、StrBlobPtr 类、StrVec 类和 String 类定义下标运算符。
+
+## 练习14.27
+
+> 为你的 StrBlobPtr 类添加递增和递减运算符。
+
+## 练习14.28
+
+> 为你的 StrBlobPtr 类添加加法和减法运算符，使其可以实现指针的算术运算。
+
+## 练习14.29
+
+> 为什么不定义const 版本的递增和递减运算符？
+
+因为递增和递减会改变对象本身，所以定义 const 版本的毫无意义。
+
+## 练习14.30
+
+> 为你的 StrBlobPtr 类和在12.1.6节练习12.22中定义的 ConstStrBlobPtr 的类分别添加解引用运算符和箭头运算符。注意：因为 ConstStrBlobPtr 的数据成员指向const vector，所以ConstStrBlobPtr 中的运算符必须返回常量引用。
