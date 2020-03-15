@@ -133,6 +133,12 @@ istream& operator>>(istream& in, Sales_data& s)
 
 > 为你的 StrBlob 类、StrBlobPtr 类、StrVec 类和 String 类分别定义相等运算符和不相等运算符。
 
+- `StrBlob` & `StrBlobPtr`: [hpp](14.16.StrBlob.h) | [cpp](14.16.StrBlob.cpp) | [Test](14.16.StrBlobTest.cpp)
+- `StrVec`: [hpp](14.16.StrVec.h) | [cpp](14.16.StrVec.cpp) | [Test](14.16.StrVecMain.cpp)
+- `String`: [hpp](14.16.String.h) | [cpp](14.16.String.cpp) | [Test](14.16.StringMain.cpp)- `StrBlob` & `StrBlobPtr`: [hpp](14.16.StrBlob.h) | [cpp](14.16.StrBlob.cpp) | [Test](14.16.StrBlobTest.cpp)
+- `StrVec`: [hpp](14.16.StrVec.h) | [cpp](14.16.StrVec.cpp) | [Test](14.16.StrVecMain.cpp)
+- `String`: [hpp](14.16.String.h) | [cpp](14.16.String.cpp) | [Test](14.16.StringMain.cpp)
+
 ## 练习14.17
 
 > 你在7.5.1节中的练习7.40中曾经选择并编写了一个类，你认为它应该含有相等运算符吗？如果是，请实现它；如果不是，解释原因。
@@ -201,3 +207,54 @@ istream& operator>>(istream& in, Sales_data& s)
 ## 练习14.30
 
 > 为你的 StrBlobPtr 类和在12.1.6节练习12.22中定义的 ConstStrBlobPtr 的类分别添加解引用运算符和箭头运算符。注意：因为 ConstStrBlobPtr 的数据成员指向const vector，所以ConstStrBlobPtr 中的运算符必须返回常量引用。
+
+## 练习14.31
+
+> 我们的 StrBlobPtr 类没有定义拷贝构造函数、赋值运算符以及析构函数，为什么？
+
+因为使用合成的足够了。
+
+## 练习14.32
+
+> 定义一个类令其含有指向 StrBlobPtr 对象的指针，为这个类定义重载的箭头运算符。
+
+```cpp
+class StrBlobPtr;
+
+class StrBlobPtr_pointer
+{
+public:
+    StrBlobPtr_pointer() = default;
+    StrBlobPtr_pointer(StrBlobPtr* p) : pointer(p) { }
+
+    StrBlobPtr& operator *();
+    StrBlobPtr* operator->();
+
+private:
+    StrBlobPtr* pointer = nullptr;
+};
+```
+
+## 练习14.33
+
+> 一个重载的函数调用运算符应该接受几个运算对象？
+
+一个重载的函数调用运算符接受的运算对象应该和该运算符拥有的操作数一样多。
+
+## 练习14.34
+
+> 定义一个函数对象类，令其执行if-then-else 的操作：该类的调用运算符接受三个形参，它首先检查第一个形参，如果成功返回第二个形参值；如果不成功返回第三个形参的值。
+
+```cpp
+struct Test 
+{
+    int operator()(bool b, int iA, int iB) 
+    {
+        return b ? iA : iB;
+    }
+};
+```
+
+## [练习14.35](14.35.cpp)
+
+> 编写一个类似于 PrintString 的类，令其从 istream 中读取一行输入，然后返回一个表示我们所读内容的string。如果读取失败，返回空string。
