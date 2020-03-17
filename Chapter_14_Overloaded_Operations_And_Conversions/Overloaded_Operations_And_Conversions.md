@@ -278,3 +278,38 @@ struct Test
 ## [练习14.40](14.40.cpp)
 
 > 重新编写10.3.2节的biggies 函数，使用函数对象替换其中的 lambda 表达式。
+
+## 练习14.41
+
+> 你认为 C++ 11 标准为什么要增加 lambda？对于你自己来说，什么情况下会使用 lambda，什么情况下会使用类？
+
+使用 lambda 是非常方便的，当需要使用一个函数，而这个函数不常使用并且简单时，使用lambda 是比较方便的选择。
+
+## 练习14.42
+
+> 使用标准库函数对象及适配器定义一条表达式，令其
+```
+(a) 统计大于1024的值有多少个。 
+(b) 找到第一个不等于pooh的字符串。
+(c)将所有的值乘以2。
+```
+
+```cpp
+std::count_if(ivec.cbegin(), ivec.cend(), std::bind(std::greater<int>(), _1, 1024));
+std::find_if(svec.cbegin(), svec.cend(), std::bind(std::not_equal_to<std::string>(), _1, "pooh"));
+std::transform(ivec.begin(), ivec.end(), ivec.begin(), std::bind(std::multiplies<int>(), _1, 2));
+```
+
+## [练习14.43](14.43.cpp)
+
+> 使用标准库函数对象判断一个给定的int值是否能被 int 容器中的所有元素整除。
+
+## [练习14.44](14.44.cpp)
+
+> 编写一个简单的桌面计算器使其能处理二元运算。
+
+## 练习14.45
+
+> 编写类型转换运算符将一个 Sales_data 对象分别转换成 string 和 double，你认为这些运算符的返回值应该是什么？
+
+[hpp](14.45.h) | [cpp](14.45.cpp) | [test](14.45.main.cpp)
