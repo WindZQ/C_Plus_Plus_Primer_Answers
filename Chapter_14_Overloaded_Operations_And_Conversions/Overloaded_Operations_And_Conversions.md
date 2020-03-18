@@ -147,6 +147,10 @@ istream& operator>>(istream& in, Sales_data& s)
 
 > 为你的 StrBlob 类、StrBlobPtr 类、StrVec 类和 String 类分别定义关系运算符。
 
+- `StrBlob` & `StrBlobPtr`: [hpp](14.18.StrBlob.h) | [cpp](14.18.StrBlob.cpp) | [Test](14.18.StrBlobTest.cpp)
+- `StrVec`: [hpp](14.18.StrVec.h) | [cpp](14.18.StrVec.cpp) | [Test](14.18.StrVecMain.cpp)
+- `String`: [hpp](14.18.String.h) | [cpp](14.18.String.cpp) | [Test](14.18.StringMain.cpp)
+
 ## 练习14.19
 
 > 你在7.5.1节的练习7.40中曾经选择并编写了一个类，你认为它应该含有关系运算符吗？如果是，请实现它；如果不是，解释原因。
@@ -313,3 +317,52 @@ std::transform(ivec.begin(), ivec.end(), ivec.begin(), std::bind(std::multiplies
 > 编写类型转换运算符将一个 Sales_data 对象分别转换成 string 和 double，你认为这些运算符的返回值应该是什么？
 
 [hpp](14.45.h) | [cpp](14.45.cpp) | [test](14.45.main.cpp)
+
+
+## 练习14.46
+
+> 你认为应该为 Sales_data 类定义上面两种类型转换运算符吗？应该把它们声明成 explicit 的吗？为什么？
+
+上面的两种类型转换有歧义，应该声明成 explicit 的。
+
+## 练习14.47
+
+> 说明下面这两个类型转换运算符的区别。
+```cpp
+struct Integral {
+	operator const int();
+	operator int() const;
+}
+```
+
+第一个无意义，会被编译器忽略。第二个合法。
+
+## 练习14.48 
+
+> 你在7.5.1节的练习7.40中曾经选择并编写了一个类，你认为它应该含有向 bool 的类型转换运算符吗？如果是，解释原因并说明该运算符是否应该是 explicit的；如果不是，也请解释原因。
+
+Date 类应该含有向 bool 的类型转换运算符，并且应该声明为 explicit 的。
+
+## 练习14.49
+
+> 为上一题提到的类定义一个转换目标是 bool 的类型转换运算符，先不用在意这么做是否应该。
+
+```cpp
+ explicit operator bool() { return (year<4000) ? true : false; }
+```
+
+## 练习14.50
+
+> 在初始化 ex1 和 ex2 的过程中，可能用到哪些类类型的转换序列呢？说明初始化是否正确并解释原因。
+```cpp
+struct LongDouble {
+	LongDouble(double = 0.0);
+	operator double();
+	operator float();
+};
+LongDouble ldObj;
+int ex1 = ldObj;
+float ex2 = ldObj;
+```
+
+ex1 转换不合法，没有定义从 `LongDouble` 到 `int` 的转换。ex2 合法。
