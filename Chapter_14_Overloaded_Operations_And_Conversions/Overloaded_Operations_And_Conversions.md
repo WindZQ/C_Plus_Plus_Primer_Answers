@@ -194,13 +194,21 @@ istream& operator>>(istream& in, Sales_data& s)
 
 > 为你的 StrBlob 类、StrBlobPtr 类、StrVec 类和 String 类定义下标运算符。
 
+- `StrBlob` & `StrBlobPtr`: [hpp](14.26.StrBlob.h) | [cpp](14.26.StrBlob.cpp) | [Test](14.26.StrBlobTest.cpp)
+- `StrVec`: [hpp](14.26.StrVec.h) | [cpp](14.26.StrVec.cpp) | [Test](14.26.StrVecMain.cpp)
+- `String`: [hpp](14.26.String.h) | [cpp](14.26.String.cpp) | [Test](14.26.StringMain.cpp)
+
 ## 练习14.27
 
 > 为你的 StrBlobPtr 类添加递增和递减运算符。
 
+[hpp](ex14.27.28.StrBlob.h) | [cpp](14.27.28.StrBlob.cpp) | [Test](14.27.28.StrBlobTest.cpp)
+
 ## 练习14.28
 
 > 为你的 StrBlobPtr 类添加加法和减法运算符，使其可以实现指针的算术运算。
+
+[hpp](ex14.27.28.StrBlob.h) | [cpp](14.27.28.StrBlob.cpp) | [Test](14.27.28.StrBlobTest.cpp)
 
 ## 练习14.29
 
@@ -366,3 +374,56 @@ float ex2 = ldObj;
 ```
 
 ex1 转换不合法，没有定义从 `LongDouble` 到 `int` 的转换。ex2 合法。
+
+
+## 练习14.51
+
+> 在调用 calc 的过程中，可能用到哪些类型转换序列呢？说明最佳可行函数是如何被选出来的。
+```cpp
+void calc(int);
+void calc(LongDouble);
+double dval;
+calc(dval);  //哪个calc？
+```
+
+最佳可行函数是 `void calc(int)`。
+
+转换的优先级如下：
+
+1. 精确匹配
+2. const 转换。
+3. 类型提升
+4. 算术转换
+5. 类类型转换
+
+## 练习14.52
+
+> 在下面的加法表达式中分别选用了哪个operator+？列出候选函数、可行函数及为每个可行函数的实参执行的类型转换：
+```cpp
+struct Longdouble {
+	//用于演示的成员operator+;在通常情况下是个非成员
+	LongDouble operator+(const SmallInt&);
+	//其他成员与14.9.2节一致
+};
+LongDouble operator+(LongDouble&, double);
+SmallInt si;
+LongDouble ld;
+ld = si + ld;
+ld = ld + si;
+```
+
+`ld = si + ld;` 不合法。`ld = ld + si` 两个都可以调用，但是第一个调用更精确一些。
+
+## 练习14.53
+
+> 假设我们已经定义了如第522页所示的SmallInt，判断下面的加法表达式是否合法。如果合法，使用了哪个加法运算符？如果不合法，应该怎样修改代码才能使其合法？
+```cpp
+SmallInt si;
+double d = si + 3.14;
+```
+
+不合法。应该该为：
+```cpp
+SmallInt s1;
+double d = s1 + SmallInt(3.14);
+```
