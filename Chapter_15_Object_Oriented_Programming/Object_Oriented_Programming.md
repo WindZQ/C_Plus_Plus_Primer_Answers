@@ -61,3 +61,70 @@ class Base { ... };
 > 回忆我们在8.1节进行的讨论，解释第284页中将 ifstream 传递给 Sales_data 的read 函数的程序是如何工作的。
 
 `std::ifstream` 是 `std::istream` 的派生基类，因此 read 函数能够正常工作。
+
+## 练习15.11
+
+> 为你的 Quote 类体系添加一个名为 debug 的虚函数，令其分别显示每个类的数据成员。
+
+```cpp
+void Quote::debug() const
+{
+    std::cout << "data members of this class:\n"
+              << "bookNo= " <<this->bookNo << " "
+              << "price= " <<this->price<< " ";
+}
+```
+
+## 练习15.12
+
+> 有必要将一个成员函数同时声明成 override 和 final 吗？为什么？
+
+有必要。override 的含义是重写基类中相同名称的虚函数，final 是阻止它的派生类重写当前虚函数。
+
+## 练习15.13
+
+> 给定下面的类，解释每个 print 函数的机理：
+```cpp
+class base {
+public:
+	string name() { return basename;}
+	virtual void print(ostream &os) { os << basename; }
+private:
+	string basename;
+};
+class derived : public base {
+public:
+	void print(ostream &os) { print(os); os << " " << i; }
+private:
+	int i;
+};
+```
+在上述代码中存在问题吗？如果有，你该如何修改它？
+
+有问题。应该改为：
+```cpp
+	void print(ostream &os) override { base::print(os); os << " derived\n " << i; }
+```
+
+## 练习15.14
+
+> 给定上一题中的类以及下面这些对象，说明在运行时调用哪个函数：
+```cpp
+base bobj; 		base *bp1 = &bobj; 	base &br1 = bobj;
+derived dobj; 	base *bp2 = &dobj; 	base &br2 = dobj;
+(a) bobj.print();	(b)dobj.print();	(c)bp1->name();
+(d)bp2->name();		(e)br1.print();		(f)br2.print();
+```
+
+* (a) 编译时。
+* (b) 编译时。
+* (c) 编译时。
+* (d) 编译时。
+* (e) 运行时。base::print()
+* (f) 运行时。derived::print()
+
+## 练习15.15
+
+> 定义你自己的 Disc_quote 和 Bulk_quote。
+
+[Disc_quote](Disc_quote.h) | [Bulk_quote](Bulk_quote.h)
