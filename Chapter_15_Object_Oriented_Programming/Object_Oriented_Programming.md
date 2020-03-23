@@ -128,3 +128,55 @@ derived dobj; 	base *bp2 = &dobj; 	base &br2 = dobj;
 > 定义你自己的 Disc_quote 和 Bulk_quote。
 
 [Disc_quote](Disc_quote.h) | [Bulk_quote](Bulk_quote.h)
+
+## 练习15.16
+
+> 改写你在15.2.2节练习中编写的数量受限的折扣策略，令其继承 Disc_quote。
+
+[Limit_quote](Limit_quote.h)
+
+## 练习15.17
+
+> 尝试定义一个 Disc_quote 的对象，看看编译器给出的错误信息是什么？
+
+`error: cannot declare variable 'd' to be of abstract type 'Disc_quote': Disc_quote d;`
+
+## 练习15.18
+
+> 假设给定了第543页和第544页的类，同时已知每个对象的类型如注释所示，判断下面的哪些赋值语句是合法的。解释那些不合法的语句为什么不被允许：
+```cpp
+Base *p = &d1;  //d1 的类型是 Pub_Derv
+p = &d2;		//d2 的类型是 Priv_Derv
+p = &d3;		//d3 的类型是 Prot_Derv
+p = &dd1;		//dd1 的类型是 Derived_from_Public	
+p = &dd2;		//dd2 的类型是 Derived_from_Private
+p = &dd3;		//dd3 的类型是 Derived_from_Protected
+```
+
+* Base *p = &d1; 合法
+* p = &d2; 不合法
+* p = &d3; 不合法
+* p = &dd1; 合法
+* p = &dd2; 不合法
+* p = &dd3; 不合法
+
+## 练习15.19
+
+> 假设543页和544页的每个类都有如下形式的成员函数：
+```cpp
+void memfcn(Base &b) { b = *this; }
+```
+对于每个类，分别判断上面的函数是否合法。
+
+合法：
+* Pub_Derv
+* Priv_Derv
+* Prot_Derv
+* Derived_from_Public
+* Derived_from_Protected
+不合法：
+* Derived_from_Private
+
+## [练习15.20](15.20.cpp)
+
+> 编写代码检验你对前面两题的回答是否正确。
