@@ -50,3 +50,51 @@ void print(const Array& arr)
 }
 ```
 
+## 练习16.6
+
+> 你认为接受一个数组实参的标准库函数 begin 和 end 是如何工作的？定义你自己版本的 begin 和 end。
+
+```cpp
+template<typename T, unsigned N>
+T* begin(const T (&arr)[N])
+{
+	return arr;
+}
+
+template<typename T, unsigned N>
+T* end(const T (&arr)[N])
+{
+	return arr + N;
+}
+```
+
+## 练习16.7
+
+> 编写一个 constexpr 模版，返回给定数组的大小。
+
+```cpp
+template<typename T, typename N> constexpr
+unsigned size(const T (&arr)[N])
+{
+	return N;
+}
+```
+
+## 练习16.8
+
+> 在第97页的“关键概念”中，我们注意到，C++程序员喜欢使用 != 而不喜欢 < 。解释这个习惯的原因。
+
+因为大多数类只定义了 != 操作而没有定义 < 操作，使用 != 可以降低对要处理的类型的要求。
+
+## 练习16.9
+
+> 什么是函数模版，什么是类模版？
+
+一个函数模版就是一个公式，可用来生成针对特定类型的函数版本。类模版是用来生成类的蓝图的，与函数模版的不同之处是，编译器不能为类模版推断模版参数类型。如果我们已经多次看到，为了使用类模版，我们必须在模版名后的尖括号中提供额外信息。
+
+## 练习16.10
+
+> 当一个类模版被实例化时，会发生什么？
+
+一个类模版的每个实例都形成一个独立的类。
+
