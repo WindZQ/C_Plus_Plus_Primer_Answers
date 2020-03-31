@@ -98,3 +98,60 @@ unsigned size(const T (&arr)[N])
 
 一个类模版的每个实例都形成一个独立的类。
 
+## 练习16.11
+
+> 下面 List 的定义是错误的。应如何修改它？
+```cpp
+template <typename elemType> class ListItem;
+template <typename elemType> class List {
+public:
+	List<elemType>();
+	List<elemType>(const List<elemType> &);
+	List<elemType>& operator=(const List<elemType> &);
+	~List();
+	void insert(ListItem *ptr, elemType value);
+private:
+	ListItem *front, *end;
+};
+```
+
+模版需要模版参数，应该修改为如下：
+```cpp
+template <typename elemType> class ListItem;  
+template <typename elemType> class List{  
+public:  
+  	List<elemType>();  
+  	List<elemType>(const List<elemType> &);  
+  	List<elemType>& operator=(const List<elemType> &);  
+  	~List();  
+  	void insert(ListItem<elemType> *ptr, elemType value);  
+private:  
+  	ListItem<elemType> *front, *end;  
+};
+```	
+
+## 练习16.12
+
+> 编写你自己版本的 Blob 和 BlobPtr 模版，包含书中未定义的多个const成员。
+
+[Blob](blob.h) | [BlobPtr](blobptr.h)
+
+## 练习16.13
+
+> 解释你为 BlobPtr 的相等和关系运算符选择哪种类型的友好关系？
+
+这里需要与类型一一对应，所以就选择一对一友好关系。
+
+## 练习16.14
+
+> 编写 Screen 类模版，用非类型参数定义 Screen 的高和宽。
+
+[Screen](screen.h)
+
+## 练习16.15
+
+> 为你的 Screen 模版实现输入和输出运算符。Screen 类需要哪些友元（如果需要的话）来令输入和输出运算符正确工作？解释每个友元声明（如果有的话）为什么是必要的。
+
+类的 operator<< 和 operator>> 应该是类的友元。
+
+
