@@ -154,4 +154,60 @@ private:
 
 类的 operator<< 和 operator>> 应该是类的友元。
 
+## 练习16.16
+
+> 将 StrVec 类重写为模版，命名为 Vec。
+
+[Vec](vec.h)
+
+## 练习16.17
+
+> 声明为 typename 的类型参数和声明为 class 的类型参数有什么不同（如果有的话）？什么时候必须使用typename？
+
+没有什么不同。当我们希望通知编译器一个名字表示类型时，必须使用关键字 typename，而不能使用 class。
+
+## 练习16.18
+
+> 解释下面每个函数模版声明并指出它们是否非法。更正你发现的每个错误。
+```cpp
+(a) template <typename T, U, typename V> void f1(T, U, V);
+(b) template <typename T> T f2(int &T);
+(c) inline template <typename T> T foo(T, unsigned int *);
+(d) template <typename T> f4(T, T);
+(e) typedef char Ctype;
+	template <typename Ctype> Ctype f5(Ctype a);
+```
+
+* (a) 非法。应该为 `template <typename T, typename U, typename V> void f1(T, U, V);`。
+* (b) 非法。应该为 `template <typename T> T f2(int &t);`
+* (c) 非法。应该为 `template <typename T> inline T foo(T, unsigned int*);`
+* (d) 非法。应该为 `template <typename T> T f4(T, T);`
+* (e) 非法。Ctype 被隐藏了。
+
+## 练习16.19
+
+> 编写函数，接受一个容器的引用，打印容器中的元素。使用容器的 size_type 和 size成员来控制打印元素的循环。
+
+```cpp
+template<typename Container>
+void print(const Container& c)
+{
+	for (typename Container::size_type i = 0; i != c.size(); ++i)
+		std::cout << c[i] << " ";
+}
+```
+
+## 练习16.20
+
+> 重写上一题的函数，使用begin 和 end 返回的迭代器来控制循环。
+
+```cpp
+template<typename Container>
+void print(const Container& c)
+{
+	for (auto it = c.begin(); it != c.end(); ++it)
+		std::cout << *it << " ";
+}
+```
+
 
