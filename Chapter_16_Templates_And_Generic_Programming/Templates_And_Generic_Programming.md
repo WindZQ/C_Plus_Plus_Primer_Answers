@@ -210,4 +210,38 @@ void print(const Container& c)
 }
 ```
 
+## 练习16.21
 
+> 编写你自己的 DebugDelete 版本。
+
+[DebugDelete](debugDelete.h)
+
+## 练习16.22
+
+> 修改12.3节中你的 TextQuery 程序，令 shared_ptr 成员使用 DebugDelete 作为它们的删除器。
+
+## 练习16.23
+
+> 预测在你的查询主程序中何时会执行调用运算符。如果你的预测和实际不符，确认你理解了原因。
+
+## 练习16.24
+
+> 为你的 Blob 模版添加一个构造函数，它接受两个迭代器。
+
+```cpp
+template<typename T>    //for class
+template<typename It>   //for this member
+Blob<T>::Blob(It b, It e) :
+    data(std::make_shared<std::vector<T>>(b, e))
+{ }
+```
+
+## 练习16.25
+
+> 解释下面这些声明的含义。
+```cpp
+extern template class vector<string>;
+template class vector<Sales_data>;
+```
+
+前者是模版声明，后者是实例化定义。
