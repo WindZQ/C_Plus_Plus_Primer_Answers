@@ -245,3 +245,46 @@ template class vector<Sales_data>;
 ```
 
 前者是模版声明，后者是实例化定义。
+
+## 练习16.26
+
+> 假设 NoDefault 是一个没有默认构造函数的类，我们可以显式实例化 vector<NoDefualt>吗？如果不可以，解释为什么。
+
+不可以。如
+```cpp
+std::vector<NoDefault> vec(10);
+```
+会使用 NoDefault 的默认构造函数，而 NoDefault 没有默认构造函数，因此是不可以的。
+
+## 练习16.27
+
+> 对下面每条带标签的语句，解释发生了什么样的实例化（如果有的话）。如果一个模版被实例化，解释为什么;如果未实例化，解释为什么没有。
+```cpp
+template <typename T> class Stack {	};
+void f1(Stack<char>); 		//(a)
+class Exercise {
+	Stack<double> &rds;		//(b)
+	Stack<int> si;			//(c)
+};
+int main() {
+	Stack<char> *sc;		//(d)
+	f1(*sc);				//(e)
+	int iObj = sizeof(Stack<string>);	//(f)
+}
+```
+
+(a)、(b)、(c)、(f) 都发生了实例化，(d)、(e) 没有实例化。
+
+## 练习16.28
+
+> 编写你自己版本的 shared_ptr 和 unique_ptr。
+
+[shared_ptr](shared_ptr.h) | [unique_ptr](unique_ptr.h)
+
+## 练习16.29
+
+> 修改你的 Blob 类，用你自己的 shared_ptr 代替标准库中的版本。
+
+## 练习16.30
+
+> 重新运行你的一些程序，验证你的 shared_ptr 类和修改后的 Blob 类。（注意：实现 weak_ptr 类型超出了本书范围，因此你不能将BlobPtr类与你修改后的Blob一起使用。）
