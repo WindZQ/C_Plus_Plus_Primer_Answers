@@ -288,3 +288,50 @@ int main() {
 ## 练习16.30
 
 > 重新运行你的一些程序，验证你的 shared_ptr 类和修改后的 Blob 类。（注意：实现 weak_ptr 类型超出了本书范围，因此你不能将BlobPtr类与你修改后的Blob一起使用。）
+
+## 练习16.31
+
+> 如果我们将 DebugDelete 与 unique_ptr 一起使用，解释编译器将删除器处理为内联形式的可能方式。
+
+## 练习16.32
+
+> 在模版实参推断过程中发生了什么？
+
+在模版实参推断过程中，编译器使用函数调用中的实参类型来寻找模版实参，用这些模版实参生成的函数版本与给定的函数调用最为匹配。
+
+## 练习16.33
+
+> 指出在模版实参推断过程中允许对函数实参进行的两种类型转换。
+
+* const 转换：可以将一个非 const 对象的引用（或指针）传递给一个 const 的引用（或指针）形参。
+* 数组或函数指针转换：如果函数形参不是引用类型，则可以对数组或函数类型的实参应用正常的指针转换。一个数组实参可以转换为一个指向其首元素的指针。类似的，一个函数实参可以转换为一个该函数类型的指针。
+
+## 练习16.34
+
+> 对下面的代码解释每个调用是否合法。如果合法，T 的类型是什么？如果不合法，为什么？
+```cpp
+template <class T> int compare(const T&, const T&);
+(a) compare("hi", "world");
+(b) compare("bye", "dad");
+```
+
+* (a) 不合法。`compare(const char [3], const char [6])`, 两个实参类型不一致。
+* (b) 合法。`compare(const char [4], const char [4])`.
+
+## 练习16.35
+
+> 下面调用中哪些是错误的（如果有的话）？如果调用合法，T 的类型是什么？如果调用不合法，问题何在？
+```cpp
+template <typename T> T calc(T, int);
+tempalte <typename T> T fcn(T, T);
+double d; float f; char c;
+(a) calc(c, 'c'); 
+(b) calc(d, f);
+(c) fcn(c, 'c');
+(d) fcn(d, f);
+```
+
+* (a) 合法，类型为char
+* (b) 合法，类型为double
+* (c) 合法，类型为char
+* (d) 不合法，这里无法确定T的类型是float还是double
