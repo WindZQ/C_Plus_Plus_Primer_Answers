@@ -335,3 +335,116 @@ double d; float f; char c;
 * (b) 合法，类型为double
 * (c) 合法，类型为char
 * (d) 不合法，这里无法确定T的类型是float还是double
+
+## 练习16.36
+
+> 进行下面的调用会发生什么：
+```cpp
+template <typename T> f1(T, T);
+template <typename T1, typename T2) f2(T1, T2);
+int i = 0, j = 42, *p1 = &i, *p2 = &j;
+const int *cp1 = &i, *cp2 = &j;
+(a) f1(p1, p2);
+(b) f2(p1, p2);
+(c) f1(cp1, cp2);
+(d) f2(cp1, cp2);
+(e) f1(p1, cp1);
+(f) f2(p1, cp1);
+```
+
+* (a) f1(int*, int*);
+* (b) f2(int*, int*);
+* (c) f1(const int*, const int*);
+* (d) f2(const int*, const int*);
+* (e) f1(int*, const int*); 这个使用就不合法
+* (f) f2(int*, const int*);
+
+## 练习16.37
+
+> 标准库 max 函数有两个参数，它返回实参中的较大者。此函数有一个模版类型参数。你能在调用 max 时传递给它一个 int 和一个 double 吗？如果可以，如何做？如果不可以，为什么？
+
+可以。提供显式的模版实参：
+```cpp
+int a = 1;
+double b = 2;
+std::max<double>(a, b);
+```
+
+## 练习16.38
+
+> 当我们调用 make_shared 时，必须提供一个显示模版实参。解释为什么需要显式模版实参以及它是如果使用的。
+
+如果不显示提供模版实参，那么 make_shared 无法推断要分配多大内存空间。
+
+## 练习16.39
+
+> 对16.1.1节 中的原始版本的 compare 函数，使用一个显式模版实参，使得可以向函数传递两个字符串字面量。
+
+```cpp
+compare<std::string>("hello", "world")  
+```
+
+## 练习16.40
+
+> 下面的函数是否合法？如果不合法，为什么？如果合法，对可以传递的实参类型有什么限制（如果有的话）？返回类型是什么？
+```cpp
+template <typename It>
+auto fcn3(It beg, It end) -> decltype(*beg + 0)
+{
+	//处理序列
+	return *beg;
+}
+```
+
+合法。该类型需要支持 + 操作。
+
+## 练习16.41
+
+> 编写一个新的 sum 版本，它返回类型保证足够大，足以容纳加法结果。
+
+```cpp
+template<typename T>
+auto sum(T lhs, T rhs) -> decltype( lhs + rhs)
+{
+    return lhs + rhs;
+}
+
+```
+
+## 练习16.42
+
+> 对下面每个调用，确定 T 和 val 的类型：
+```cpp
+template <typename T> void g(T&& val);
+int i = 0; const int ci = i;
+(a) g(i);
+(b) g(ci);
+(c) g(i * ci);
+```
+
+* (a) 模板参数T类型：int&，函数参数val类型：int&
+* (b) 模板参数T类型：const int&，函数参数val类型：const int&
+* (c) 模板参数T类型：int，函数参数val类型：int&&
+
+## 练习16.43
+
+> 使用上一题定义的函数，如果我们调用g(i = ci),g 的模版参数将是什么？
+
+i = ci 返回的是左值，因此 g 的模版参数是 int&
+
+## 练习16.44
+
+> 使用与第一题中相同的三个调用，如果 g 的函数参数声明为 T（而不是T&&），确定T的类型。如果g的函数参数是 const T&呢？
+
+当声明为T的时候, 模板参数T对于g(i)为int,对于g(ci)为const int,对于g(i * ci)为int。
+当声明为const T&的时候，模板参数T对这三个调用都为int。
+
+## 练习16.45
+
+> 如果下面的模版，如果我们对一个像42这样的字面常量调用g，解释会发生什么？如果我们对一个int 类型的变量调用g 呢？
+```cpp
+template <typename T> void g(T&& val) { vector<T> v; }
+```
+
+当使用字面常量，T将为int。
+当使用int变量，T将为int&。编译的时候将会报错，因为没有办法对这种类型进行内存分配，无法创建vector<int&>.
