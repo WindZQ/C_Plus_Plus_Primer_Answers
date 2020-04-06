@@ -448,3 +448,118 @@ template <typename T> void g(T&& val) { vector<T> v; }
 
 当使用字面常量，T将为int。
 当使用int变量，T将为int&。编译的时候将会报错，因为没有办法对这种类型进行内存分配，无法创建vector<int&>.
+
+## 练习16.46
+
+> 解释下面的循环，它来自13.5节中的 StrVec::reallocate:
+```cpp
+for (size_t i = 0; i != size(); ++i)
+	alloc.construct(dest++, std::move(*elem++));
+```
+
+在每个循环中，对 elem 的解引用操作 * 当中，会返回一个左值，`std::move` 函数将该左值转换为右值，提供给 `construct` 函数。
+
+## 练习16.47
+
+> 编写你自己版本的翻转函数，通过调用接受左值和右值引用参数的函数来测试它。
+
+```cpp
+template<typename F, typename T1, typename T2>
+void flip(F f, T1&& t1, T2&& t2)
+{
+    f(std::forward<T2>(t2), std::forward<T1>(t1));
+}
+```
+
+## 练习16.48
+
+> 编写你自己版本的 debug_rep 函数。
+
+```cpp
+template<typename T> std::string debug_rep(const T& t)
+{
+    std::ostringstream ret;
+    ret << t;
+    return ret.str();
+}
+
+template<typename T> std::string debug_rep(T* p)
+{
+    std::ostringstream ret;
+    ret << "pointer: " << p;
+
+    if(p)
+        ret << " " << debug_rep(*p);
+    else
+        ret << " null pointer";
+
+    return ret.str();
+}
+```
+
+## 练习16.49
+
+> 解释下面每个调用会发生什么：
+```cpp
+template <typename T> void f(T);
+tempalte <typename T> void f(const T*);
+tempalte <typename T> void g(T);
+tempalte <typename T> void g(T*);
+int i = 42, *p = &i;
+const int ci = 0, *p2 = &ci;
+g(42); g(p); g(ci); g(p2);
+f(42); f(p); f(ci); f(p2);
+```
+
+```cpp
+    g(42);    	//g(T )
+    g(p);     	//g(T*)
+    g(ci);      //g(T)   
+    g(p2);      //g(T*)    
+    f(42);    	//f(T)
+    f(p);     	//f(T)
+    f(ci);    	//f(T)
+    f(p2);      //f(const T*)
+```
+
+## 练习16.50
+
+> 定义上一个练习中的函数，令它们打印一条身份信息。运行该练习中的代码。如果函数调用的行为与你预期不符，确定你理解了原因。
+
+## 练习16.51
+
+> 调用本节中的每个 foo，确定 sizeof...(Args) 和 sizeof...(rest)分别返回什么。
+
+## 练习16.52
+
+> 编写一个程序验证上一题的答案。
+
+## 练习16.53
+
+> 编写你自己版本的 print 函数，并打印一个、两个及五个实参来测试它，要打印的每个实参都应有不同的类型。 
+
+```cpp
+template<typename Printable>
+std::ostream& print(std::ostream& os, Printable const& printable)
+{
+    return os << printable;
+}
+// recursion
+template<typename Printable, typename... Args>
+std::ostream& print(std::ostream& os, Printable const& printable, Args const&... rest)
+{
+    return print(os << printable << ", ", rest...);
+}
+```
+
+## 练习16.54
+
+> 如果我们对一个没 << 运算符的类型调用 print，会发生什么？
+
+无法通过编译。
+
+## 练习16.55
+
+> 如果我们的可变参数版本 print 的定义之后声明非可变参数版本，解释可变参数的版本会如何执行。
+
+`error: no matching function for call to 'print(std::ostream&)'`
