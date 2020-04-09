@@ -300,3 +300,147 @@ int main()
     return 0;
 }
 ```
+
+## 练习17.6
+
+> 重写 findBook，不使用tuple和pair。
+
+```cpp
+#include <iostream>
+#include <string>
+#include "Sales_data.h"
+#include <unordered_set>
+#include <algorithm>
+#include <utility>
+
+namespace std
+{
+	template <>
+	struct hash<Sales_data>
+	{
+		typedef size_t result_type;
+		typedef Sales_data argument_type;
+		size_t operator()(const Sales_data &s) const;
+	};
+	size_t hash<Sales_data>::operator()(const Sales_data &s) const
+	{
+		return hash<std::string>()(s.bookNo) ^ hash<unsigned>()(s.units_sold) ^ hash<double>()(s.revenue);
+	}
+}
+
+bool compareIsbn(const Sales_data &lhs, const Sales_data &rhs)
+{
+	return lhs.isbn() < rhs.isbn();
+}
+
+struct matches
+{
+	std::vector<Sales_data>::size_type index;
+	std::vector<Sales_data>::const_iterator first;
+	std::vector<Sales_data>::const_iterator last;
+	matches(std::vector<Sales_data>::size_type index_, std::vector<Sales_data>::const_iterator first_, std::vector<Sales_data>::const_iterator last_) : index(index_), first(first_), last(last_) {}
+};
+
+std::vector<matches> findBook(const std::vector<std::vector<Sales_data>> &files, const std::string &book)
+{
+	std::vector<matches> ret;
+	for(auto it = files.cbegin(); it != files.cend(); ++it)
+	{
+		auto found = std::equal_range(it->cbegin(), it->cend(), Sales_data(book), compareIsbn);
+		if(found.first != found.second)
+			ret.push_back(matches(it - files.cbegin(), found.first, found.second));
+	}
+	return ret;
+}
+
+void reportResults(std::istream &in, std::ostream &os, const std::vector<std::vector<Sales_data>> &files)
+{
+	std::string s;
+	while(in >> s)
+	{
+		auto trans = findBook(files, s);
+		if(trans.empty())
+		{
+			std::cout << s << " not found in any stores" << std::endl;
+			continue;
+		}
+		for(const auto &store : trans)
+			os << "store " << store.index << " sales: " << std::accumulate(store.first, store.last, Sales_data(s)) << std::endl;
+	}
+}
+
+int main()
+{
+    Sales_data sales_data1("001-01", 1, 100);
+    Sales_data sales_data2("001-01", 2, 100);
+    Sales_data sales_data3("001-02", 2, 80);
+
+    std::vector<Sales_data> vs1 = {sales_data1, sales_data3};
+    std::vector<Sales_data> vs2 = {sales_data2};
+    std::vector<std::vector<Sales_data>> vvs = {vs1, vs2};
+
+    reportResults(std::cin, std::cout, vvs);
+
+ //    std::cout << std::hex << std::hash<std::string>()("001-01") << std::endl;
+ //    std::cout << std::hex << std::hash<unsigned>()(1) << std::endl;
+ //    std::cout << std::hex << std::hash<double>()(100) << std::endl;
+
+ //    std::unordered_multiset<Sales_data> SDset;
+ //    SDset.emplace(sales_data1);
+ //    SDset.emplace("001-03", 1, 200);
+ //    SDset.emplace(sales_data3);
+
+	// for(const auto &item : SDset)
+	// 	std::cout << "the hash code of " << item.isbn() <<":\n0x" << std::hex << std::hash<Sales_data>()(item) << "\n";
+
+    return 0;
+}
+```
+  
+## 练习17.7
+
+> 解释你更倾向于哪个版本的findBook，为什么。
+
+tuple版本的findBook，更简洁。  
+  
+## 练习17.8
+
+> 在本节最后一段代码中，如果我们将Sales_data()作为第三个参数传递给accumulate，会发生什么？
+
+返回的Sales_data中的bookNo成员为空。  
+  
+## 练习17.9
+
+> 解释下列每个bitset 对象所包含的位模式：
+```cpp
+(a) bitset<64> bitvec(32);
+(b) bitset<32> bv(1010101);
+(c) string bstr; cin >> bstr; bitset<8> bv(bstr);
+```
+
+（a）用unsigned值初始化：0000000000000000000000000000000000000000000000000000000000100000；  
+（b）用unsigned值初始化：00000000000011110110100110110101；  
+（c）用string初始化：取决于cin。  
+  
+## 练习17.10
+
+> 使用序列1、2、3、5、8、13、21初始化一个bitset，将这些位置置位。对另一个bitset进行默认初始化，并编写一小段程序将其恰当的位置位。
+
+```cpp
+#include <bitset>
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	std::vector<int> vi = {1, 2, 3, 5, 8, 13, 21};
+	std::bitset<32> bset;
+	for(auto const i : vi)
+	{
+		bset.set(i);
+	}
+	std::cout << bset << std::endl;
+
+	return 0;
+}
+```
