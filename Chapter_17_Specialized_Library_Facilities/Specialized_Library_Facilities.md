@@ -444,3 +444,215 @@ int main()
 	return 0;
 }
 ```
+
+## 练习17.11
+
+> 定义一个数据结构，包含一个整型对象，记录一个包含10个问题的真/假测验的解答。如果测验包含100道题，你需要对数据结构做出什么改变（如果需要的话）？
+
+```cpp
+#include <bitset>
+
+template <unsigned N>
+class quiz
+{
+public:
+	quiz(std::string &s) : bset(s) {}
+	
+private:
+	std::bitset<N> bset;
+};
+
+int main()
+{
+	std::string s1("0101010101");
+	std::string s2("0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101");
+	quiz<10> q1(s1);
+	quiz<100> q2(s2);
+
+	return 0;
+}
+```
+  
+## 练习17.12
+
+> 使用前一题中的数据结构，编写一个函数，它接受一个问题编号和一个表示真/假解答的值，函数根据这两个参数更新测验的解答。
+
+```cpp
+#include <bitset>
+#include <iostream>
+
+template <unsigned N>
+class quiz
+{
+template <unsigned M>
+friend std::ostream &operator<<(std::ostream&, const quiz<M>&);
+public:
+	quiz(std::string &s) : bset(s) {}
+	void update(size_t n, bool b)
+	{
+		bset[n] = b;
+	}
+	
+private:
+	std::bitset<N> bset;
+};
+
+template <unsigned M>
+std::ostream &operator<<(std::ostream &os, const quiz<M> &q)
+{
+	os << q.bset;
+	return os;
+}
+
+int main()
+{
+	std::string s1("0101010101");
+	std::string s2("0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101");
+	quiz<10> q1(s1);
+	quiz<100> q2(s2);
+
+	q1.update(1,true);
+	std::cout << q1 << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习17.13
+
+> 编写一个整型对象，包含真/假测验的正确答案。使用它来为前两题中的数据结构生成测验成绩。
+
+```cpp
+#include <bitset>
+#include <iostream>
+
+template <unsigned N>
+class quiz
+{
+template <unsigned M>
+friend std::ostream &operator<<(std::ostream&, const quiz<M>&);
+
+template <unsigned M>
+friend size_t grade(const quiz<M>&, const quiz<M>&);
+public:
+	quiz(std::string &s) : bset(s) {}
+	void update(size_t n, bool b)
+	{
+		bset[n] = b;
+	}
+	
+private:
+	std::bitset<N> bset;
+};
+
+template <unsigned M>
+std::ostream &operator<<(std::ostream &os, const quiz<M> &q)
+{
+	os << q.bset;
+	return os;
+}
+
+template <unsigned M>
+size_t grade(const quiz<M> &lhsQ, const quiz<M> &rhsQ)
+{
+	return (lhsQ.bset ^ rhsQ.bset).flip().count();
+}
+
+int main()
+{
+	std::string s1("0101010101");
+	std::string s2("0101010100");
+
+	quiz<10> q1(s1);
+	quiz<10> q2(s2);
+
+	std::cout << grade(q1, q2) << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习17.14
+
+> 编写几个正则表达式，分别触发不同错误。运行你的程序，观察编译器对每个错误的输出。
+
+```cpp
+#include <iostream>
+#include <regex>
+int main()
+{
+	try
+	{
+		std::regex r1("[[:anum:]]+\\.(cpp|cxx|cc)$", std::regex::icase);
+	}catch(std::regex_error e)
+	{
+		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
+	}
+
+	try
+	{
+		std::regex r1("[[:alnum:]+\\.(cpp|cxx|cc)$", std::regex::icase);
+	}catch(std::regex_error e)
+	{
+		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
+	}	
+
+	try
+	{
+		std::regex r1("[[:alnum:]]+\\.cpp|cxx|cc)$", std::regex::icase);
+	}catch(std::regex_error e)
+	{
+		std::cout << e.what() << "\ncode: " << e.code() << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 练习17.15
+
+> 编写程序，使用模式查找违反“i在e之前，除非在c之后”规则的单词。你的程序应该提示用户输入一个单词，然后指出此单词是否符号要求。用一些违反和未违反规则的单词测试你的程序。
+
+gcc version 4.8.4 对regex支持有问题，请使用4.9及以上版本。  
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main()
+{
+	/*https://en.wikipedia.org/wiki/I_before_E_except_after_C
+	**ie in believe, fierce, collie, die, friend
+	**ei after c in receive, ceiling, receipt, ceilidh
+	*/
+	// std::string pattern("[[:alpha:]]*(cei|[^c]ie)[[:alpha:]]*");
+	std::string pattern("[[:alpha:]]*[^c]ei[[:alpha:]]*");
+	std::regex r(pattern);
+	std::smatch results;
+	std::cout << "input a word: ";
+
+	std::string s;
+	while(std::cin >> s)
+	{
+		if(std::regex_search(s, results, r))
+			std::cout << s <<  ": error" << std::endl;
+		else
+			std::cout << s <<  ": correct" << std::endl;
+	}
+
+	return 0;
+}
+```
+```sh
+$ ./ex15 
+believe
+believe: correct
+freind
+freind: error
+receipt
+receipt: correct
+theif
+theif: error
+receive
+receive: correct
+```
