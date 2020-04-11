@@ -656,3 +656,154 @@ theif: error
 receive
 receive: correct
 ```
+
+  
+## 练习17.16
+
+> 如果前一题程序中的regex对象用"[^c]ei"进行初始化，将会发生什么？用此模式测试你的程序，检查你的答案是否正确。
+这样只匹配3个字符，（非c）和ei这3个字符，匹配成功后result中只有3个字符。  
+这里就按照题意写规则。  
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main()
+{
+	std::string pattern("[^c]ei");
+	std::regex r(pattern);
+	std::smatch results;
+
+	std::string s;
+	while(std::cin >> s)
+	{
+		if(std::regex_search(s, results, r))
+		{
+			std::cout << s <<  ": correct" << std::endl;
+			for (size_t i = 0; i < results.size(); ++i) 
+				std::cout << i << ": " << results[i] << '\n';
+		}
+		else
+		{
+			std::cout << s <<  ": error" << std::endl;
+		}
+	}
+
+	return 0;
+}
+```
+```sh
+$ ./ex16 
+freind
+freind: correct
+1: rei 
+```
+
+## 练习17.17
+
+> 更新你的程序，令它查找输入序列中所有违反"ei"语法规则的单词。
+
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main()
+{
+	std::string pattern("[[:alpha:]]*[^c]ei[[:alpha:]]*");
+	std::regex r(pattern, std::regex::icase);
+	std::smatch results;
+	std::string s("freind receipt theif receive");
+
+	for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+	{
+		std::cout << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
+```sh
+$ ./ex17 
+freind
+theif
+```
+  
+## 练习17.18
+
+> 修改你的程序，忽略包含“ei”但并非拼写错误的单词，如“albeit”和“neighbor”。
+
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	std::string pattern("([[:alpha:]]*[^c]ei[[:alpha:]]*)");
+	std::regex r(pattern, std::regex::icase);
+	std::smatch results;
+	std::string s("freind receipt theif receive albeit neighbor");
+	std::vector<std::string> vec{"neighbor","albeit","beige","feint","heir","reign","their",
+            "counterfeit","foreign","inveigh","rein","veil","deign",
+            "forfeit","inveigle","seize","veineiderdown","freight",
+            "leisure","skein","weigheight","heifer","neigh","sleigh",
+            "weighteither","height","neighbour","sleight","weirfeign",
+            "heinous","neither","surfeit","weird"};
+
+	for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+	{
+		if (find(vec.begin(), vec.end(), it->str()) != vec.end())
+			continue;
+		std::cout << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 练习17.19
+
+> 为什么可以不先检查m[4]是否匹配了就直接调用m[4].str()？
+
+没有匹配则返回为空字符串，也是可以比较的。  
+  
+## 练习17.20
+
+> 编写你自己版本的验证电话号码的程序。
+
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[1].matched)
+		return m[3].matched && (m[4].matched == 0 || m[4].str() == " ");
+	else
+		return !m[3].matched && m[4].str() == m[6].str();
+}
+
+//908.555.1500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?(\\d{3})([-. ]?)(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+
+	while(std::getline(std::cin, s))
+	{
+		for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+			if(valid(*it))
+				std::cout << "valid: " << it->str() << std::endl;
+			else
+				std::cout << "not valid: " << it->str() << std::endl;
+	}
+
+	return 0;
+}
+```
