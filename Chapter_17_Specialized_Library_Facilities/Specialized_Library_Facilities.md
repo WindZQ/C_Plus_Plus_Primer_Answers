@@ -807,3 +807,187 @@ int main()
 	return 0;
 }
 ```
+
+## 练习17.26
+
+> 重写你的电话号码程序，使之对多于一个电话号码的人只输出第二个和后续号码。
+
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[1].matched)
+		return m[3].matched && (m[4].matched == 0 || m[4].str() == " ");
+	else
+		return !m[3].matched && m[4].str() == m[7].str();
+}
+
+//tx 908.555.1500 (908)5551500
+int main()
+{
+	std::string phone = "(\\()?(\\d{3})(\\))?([-. ])?([ ]*)?(\\d{3})([-. ]?)([ ]*)?(\\d{4})";
+	std::regex r(phone);
+	std::smatch m;
+	std::string s;
+
+	while(std::getline(std::cin, s))
+	{
+		std::vector<std::string> vs;
+		for(std::sregex_iterator it(s.begin(), s.end(), r), end_it; it != end_it; ++it)
+			if(valid(*it))
+				vs.push_back(it->str());
+		if (vs.size() == 0)
+		{
+			std::cout << "no matched number" << std::endl;
+		}else if(vs.size() == 1)
+		{
+			std::cout << vs[0] << std::endl;
+		}else if(vs.size() >1)
+		{
+			for(int i = 1; i < vs.size(); ++i)
+				std::cout << vs[i] << " ";
+			std::cout << std::endl;
+		}
+	}
+
+	return 0;
+}
+```
+  
+## 练习17.27
+
+> 编写程序，将九位数字邮政编码的格式转换为 ddddd-dddd。
+
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
+
+bool valid(const std::smatch &m)
+{
+	if(m[3].matched)
+		return true;
+	else
+		return !m[2].matched;
+}
+
+//111112222
+//11111-2222
+//11111
+//11111-
+int main()
+{
+	std::string mail = "(\\d{5})([-])?(\\d{4})?";
+	std::regex r(mail);
+	std::smatch m;
+	std::string s;
+	std::string fmt = "$1-$3";
+
+	while(std::getline(std::cin, s))
+	{
+		std::cout << std::regex_replace(s, r, fmt) << std::endl;
+	}
+
+	return 0;
+}
+```
+  
+## 练习17.28
+
+> 编写函数，每次调用生成并返回一个均匀分布的随机unsigned int。
+
+```cpp
+#include <random>
+#include <iostream>
+
+unsigned random_func()
+{
+	static std::default_random_engine e;
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+int main()
+{
+	
+	std::cout << random_func() << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习17.29
+
+> 修改上一题中编写的函数，允许用户提供一个种子作为可选参数。
+
+```cpp
+#include <random>
+#include <iostream>
+
+unsigned random_func()
+{
+	static std::default_random_engine e;
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+unsigned random_func(unsigned i)
+{
+	static std::default_random_engine e(i);
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+int main()
+{
+	
+	std::cout << random_func() << std::endl;	//default 1
+	std::cout << random_func(2) << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习17.30
+
+> 再次修改你的程序，此次增加两个参数，表示函数允许返回的最小值和最大值。
+
+```cpp
+#include <random>
+#include <iostream>
+
+unsigned random_func()
+{
+	static std::default_random_engine e;
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+unsigned random_func(unsigned i)
+{
+	static std::default_random_engine e(i);
+	static std::uniform_int_distribution<unsigned> u;
+	return u(e);
+}
+
+unsigned random_func(unsigned i, unsigned min, unsigned max)
+{
+	static std::default_random_engine e(i);
+	static std::uniform_int_distribution<unsigned> u(min, max);
+	return u(e);
+}
+
+int main()
+{
+	
+	std::cout << random_func() << std::endl;	//default 1
+	std::cout << random_func(2) << std::endl;
+	for(int i = 0; i < 10; ++i)
+		std::cout << random_func(1, 0, 10) << std::endl;
+
+	return 0;
+}
+```
