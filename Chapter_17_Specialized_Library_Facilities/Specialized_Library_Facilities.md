@@ -991,3 +991,116 @@ int main()
 	return 0;
 }
 ```
+
+## 练习17.31
+
+> 对于本节中的游戏程序，如果在do循环内定义b和e，会发生什么？
+
+每次的随机数都相同。
+  
+## 练习17.32
+
+> 如果我们在循环内定义resp，会发生什么？
+
+会报错，未定义resp。
+  
+## 练习17.33
+
+> 修改11.3.6节中的单词转换程序，允许对一个给定单词有多种转换方式，每次随机选择一种进行实际转换。
+
+```cpp
+#include <map>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <ctime>
+#include <vector>
+#include <random>
+
+using namespace std;
+
+map<string, vector<string>> buildMap(ifstream &map_file)
+{
+	map<string, vector<string>> trans_map;
+	string key;
+	string value;
+	while(map_file >> key && getline(map_file, value))
+		if(value.size() > 1)
+			trans_map[key].push_back(value.substr(1));
+		else
+			throw runtime_error("no rule for " + key);
+	return trans_map;
+}
+
+const string &transform(const string &s, const map<string, vector<string>> &m)
+{
+	static default_random_engine e(time(0));
+	static uniform_int_distribution<unsigned> u(0,1);
+	auto map_it = m.find(s);
+	if(map_it != m.cend())
+		return (map_it->second)[u(e)];
+	else
+		return s;
+}
+
+void word_tranform(ifstream &map_file, ifstream &input)
+{
+	auto trans_map = buildMap(map_file);
+	// for(const auto p : trans_map)
+	// 	cout << p.first << "->" << p.second << endl;
+	string text;
+	while(getline(input, text))
+	{
+		istringstream stream(text);
+		string word;
+		bool firstword = true;
+		while(stream >> word)
+		{
+			if(firstword)
+				firstword = false;
+			else
+				cout << " ";
+			cout << transform(word, trans_map);
+		}
+		cout << endl;
+	}
+}
+
+int main()
+{
+	ifstream map_file("word_transformation.txt"), input("word_transformation_bad.txt");
+	word_tranform(map_file, input);
+
+	return 0;
+}
+```
+  
+## 练习17.34
+
+> 编写一个程序，展示如何使用表17.17和表17.18中的每个操作符。
+
+略。  
+  
+## 练习17.35
+
+> 修改第670页中的程序，打印2的平方根，但这次打印十六进制数字的大写形式。
+
+这里要使用gcc5及之后的版本编译。  
+[Missing ios_base::hexfloat format specifier](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59987)  
+```cpp
+#include <iostream>
+#include <cmath>
+
+int main()
+{
+	std::cout <<"default format: " << sqrt(2.0) << '\n'
+		<< "scientific: " << std::scientific << sqrt(2.0) << '\n'
+		<< "fixed decimal: " << std::fixed << sqrt(2.0) << '\n'
+		<< "hexidecimal: " << std::uppercase << std::hexfloat << sqrt(2.0) << '\n'
+		<< "use defaults: " << std::defaultfloat << sqrt(2.0)
+		<< "\n\n";
+
+	return 0;
+}
+```
