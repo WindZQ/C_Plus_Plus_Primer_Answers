@@ -1104,3 +1104,123 @@ int main()
 	return 0;
 }
 ```
+
+## 练习17.36
+
+> 修改上一题中的程序，打印不同的浮点数，使它们排成一列。
+
+```cpp
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+int main()
+{
+	std::cout << std::left << std::setw(16) <<"default format: " << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "scientific: " << std::scientific << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "fixed decimal: " << std::fixed << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "hexidecimal: " << std::uppercase << std::hexfloat << std::right << std::setw(25) << sqrt(2.0) << '\n'
+		<< std::left << std::setw(16) << "use defaults: " << std::defaultfloat << std::right << std::setw(25) << sqrt(2.0)
+		<< "\n\n";
+
+	return 0;
+}
+```
+  
+## 练习17.37
+
+> 用未格式化版本的getline 逐行读取一个文件。测试你的程序，给定一个文件，既包含空行又包含长度超过你传递给geiline的字符数组大小的行。
+
+[basic_istream::getline, if it extracts no characters, if it fills in the provided buffer without encountering the delimiter, or if the provided buffer size is less than 1.](https://en.cppreference.com/w/cpp/io/ios_base/iostate)
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::fstream fs("../ch08_The_IO_Library/data");
+	char tmp[200];
+	fs.getline(tmp, 2, '\n');
+	std::cout << tmp << std::endl;
+	std::cout << fs.gcount() << std::endl;
+
+	fs.getline(tmp, 2, '\n');
+	std::cout << tmp << std::endl;
+	std::cout << fs.gcount() << std::endl;
+	std::cout << std::boolalpha << (fs.rdstate() == std::ios_base::failbit) << std::endl;
+	// std::cout << std::ios_base::goodbit << std::endl;
+	// std::cout << std::ios_base::badbit << std::endl;
+	// std::cout << std::ios_base::failbit << std::endl;
+	// std::cout << std::ios_base::eofbit << std::endl;
+	//https://en.cppreference.com/w/cpp/io/ios_base/iostate
+
+	return 0;
+}
+```
+  
+## 练习17.38
+
+> 扩展上一题中你的程序，将读入的每个单词打印到它所在的行。
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::fstream fs("../ch08_The_IO_Library/data");
+	char tmp[200];
+
+	// while(fs.getline(tmp, 200, ' '))
+	// 	std::cout << tmp << std::endl;
+	fs.getline(tmp, 200, ' ');
+	std::cout << tmp << std::endl;
+	std::cout << fs.gcount() << std::endl;
+	std::cout <<fs.rdstate() << std::endl;
+	fs.getline(tmp, 200, ' ');
+	std::cout <<fs.rdstate() << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习17.39
+
+> 对本节给出的 seek程序，编写你自己的版本。
+
+```cpp
+#include <iostream>
+#include <fstream>
+
+int main()
+{
+	std::fstream inOut("copyOut", std::fstream::ate | std::fstream::in | std::fstream::out);
+
+	if(!inOut)
+	{
+		std::cerr << "Unable to open file!" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	auto end_mark = inOut.tellg();
+	inOut.seekg(0, std::fstream::beg);
+	size_t cnt = 0;
+	std::string line;
+
+	while(inOut && inOut.tellg() != end_mark && getline(inOut, line))
+	{
+		cnt += line.size() + 1;
+		auto mark = inOut.tellg();
+		inOut.seekp(0, std::fstream::end);
+		inOut << cnt;
+		if(mark != end_mark) inOut << " ";
+		inOut.seekg(mark);
+	}
+	inOut.seekp(0, std::fstream::end);
+	inOut << "\n";
+
+	return 0;
+}
+```
