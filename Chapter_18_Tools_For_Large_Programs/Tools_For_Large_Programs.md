@@ -404,3 +404,178 @@ int main()
 > 编写程序令其对两个 ISBN 编号不相同的对象执行 Sales_data 的加法运算。为该程序编写两个不同的版本：一个处理异常，另一个不处理异常。观察并比较这两个程序的行为，用心体会当出现了一个未被捕获的异常时程序会发生什么情况。
 
 程序详见18.9，出现一个未被捕获的异常时，程序将会执行terminate。
+
+## 练习18.11
+
+> 为什么 what 函数不应该抛出异常？
+
+what中如果抛出异常，需要try catch捕获，再调用what，一直循环，直达内存耗尽。  
+  
+## 练习18.12
+
+> 将你为之前各章练习编写的程序放置在各自的命名空间中。也就是说，命名空间chapter15包含Query程序的代码，命名空间chapter10包含TextQuery的代码；使用这种结构重新编译Query代码实例。
+
+Query.h  
+```cpp
+#ifndef QUERY_H_
+#define QUERY_H_
+
+#include <string>
+#include <iostream>
+#include "Query_base.h"
+#include "WordQuery.h"
+#include "TextQuery.h"
+
+namespace chapter15
+{
+	class Query
+	{
+		friend Query operator~(const Query&);
+		friend Query operator|(const Query&, const Query&);
+		friend Query operator&(const Query&, const Query&);
+	public:
+		Query(const std::string&);
+		chapter10::QueryResult eval(const chapter10::TextQuery &t) const { return q->eval(t); }
+		std::string rep() const { std::cout << "Query::rep()" << std::endl; return q->rep(); }
+	private:
+		Query(std::shared_ptr<Query_base> query) : q(query) { std::cout << "Query(std::shared_ptr<Query_base> query)" << std::endl; }
+		std::shared_ptr<Query_base> q;
+	};
+
+	std::ostream& operator<<(std::ostream &os, const Query &query)
+	{
+		return os << query.rep();
+	}
+
+	inline Query::Query(const std::string &s) : q(new WordQuery(s)) { std::cout << "Query::Query(const std::string &s)" << std::endl; }
+}
+
+#endif
+```
+  
+TextQuery.h
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include "StrBlob.h"
+
+namespace chapter10
+{
+	class QueryResult;
+
+	class TextQuery
+	{
+	public:
+		using line_no = std::vector<std::string>::size_type;
+		TextQuery(std::ifstream&);
+		QueryResult query(const std::string&) const;
+	private:
+		StrBlob file;
+		std::map<std::string, std::shared_ptr<std::set<line_no>>> word_map;
+	};
+
+	class QueryResult
+	{
+		friend std::ostream& print(std::ostream&, const QueryResult&);
+	public:
+		QueryResult(std::string s, std::shared_ptr<std::set<TextQuery::line_no>> p, StrBlob f) : sought(s), lines(p), file(f) { }
+		std::set<StrBlob::size_type>::iterator begin() const { return lines->begin(); }
+		std::set<StrBlob::size_type>::iterator end() const { return lines->end(); }
+		// std::shared_ptr<StrBlob> get_file() const { return std::make_shared<StrBlob>(file); }
+		const StrBlob& get_file() const { return file; }
+	private:
+		std::string sought;
+		std::shared_ptr<std::set<TextQuery::line_no>> lines;
+		StrBlob file;
+	};
+
+	TextQuery::TextQuery(std::ifstream &ifs)
+	{
+		std::string text_line;
+
+		while(std::getline(ifs, text_line))
+		{
+			file.push_back(text_line);
+			int line_number = file.size() - 1;
+			std::istringstream line(text_line);
+			std::string text_word;
+			while(line >> text_word)
+			{
+				std::string word;
+				std::copy_if(text_word.begin(), text_word.end(), std::back_inserter(word), isalpha);
+				// std::cout << word << std::endl;
+				auto &wm_lines = word_map[word];
+				if(!wm_lines)
+					wm_lines.reset(new std::set<line_no>);
+				wm_lines->insert(line_number);
+			}
+		}
+	}
+
+	QueryResult TextQuery::query(const std::string &sought) const
+	{
+		static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+		auto loc = word_map.find(sought);
+		if(loc == word_map.end())
+			return QueryResult(sought, nodata, file);
+		else
+			return QueryResult(sought, loc->second, file);
+	}
+
+	std::ostream &print(std::ostream &os, const QueryResult &qr)
+	{
+		os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+		for(auto num : *qr.lines)
+		{
+			ConstStrBlobPtr p(qr.file, num);
+			os << "\t(line " << num + 1 << ") " << p.deref() << std::endl;
+		}
+			
+		return os;
+	}
+}
+
+#endif
+```
+  
+## 练习18.13
+
+> 什么时候应该使用未命名的命名空间？
+
+在需要在其所在的文件中可见，在其所在的文件外不可见时；  
+static只能用于变量与函数，不可用于用户自定义的类型。  
+  
+## 练习18.14
+
+> 假设下面的operator*声明的是嵌套的命名空间 mathLib::MatrixLib 的一个成员：
+```cpp
+namespace mathLib {
+	namespace MatrixLib {
+		class matrix { /* ... */ };
+		matrix operator* (const matrix &, const matrix &);
+		// ...
+	}
+}
+```
+请问你应该如何在全局作用域中声明该运算符？
+
+```cpp
+mathLib::MatrixLib::matrix mathLib::MatrixLib::operator*(const matrix&, const matrix&);
+```
+  
+## 练习18.15
+
+> 说明 using 指示与 using 声明的区别。
+
+using指示引入的名字的作用域远比using声明引入的名字的作用域复杂。它具有将命名空间成员提升到包含命名空间本身和using指示的最近作用域的能力。对于using声明来说，我们指示简单地领名字在局部作用域有效。using指示是令整个命名空间的所有内容变得有效。通常情况下，命名空间中会含有一些不能出现在局部作用域的定义，因此using指示一般被看作是出现在最近的外层作用域中。  
