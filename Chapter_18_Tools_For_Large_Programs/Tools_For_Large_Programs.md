@@ -578,4 +578,110 @@ mathLib::MatrixLib::matrix mathLib::MatrixLib::operator*(const matrix&, const ma
 
 > 说明 using 指示与 using 声明的区别。
 
-using指示引入的名字的作用域远比using声明引入的名字的作用域复杂。它具有将命名空间成员提升到包含命名空间本身和using指示的最近作用域的能力。对于using声明来说，我们指示简单地领名字在局部作用域有效。using指示是令整个命名空间的所有内容变得有效。通常情况下，命名空间中会含有一些不能出现在局部作用域的定义，因此using指示一般被看作是出现在最近的外层作用域中。  
+using指示引入的名字的作用域远比using声明引入的名字的作用域复杂。它具有将命名空间成员提升到包含命名空间本身和using指示的最近作用域的能力。对于using声明来说，我们指示简单地领名字在局部作用域有效。using指示是令整个命名空间的所有内容变得有效。通常情况下，命名空间中会含有一些不能出现在局部作用域的定义，因此using指示一般被看作是出现在最近的外层作用域中。 
+
+## 练习18.16
+
+> 假定在下面的代码中标记为“位置1”的地方是对命名空间 Exercise中所有成员的using声明，请解释代码的含义。如果这些using声明出现在“位置2”又会怎样呢？将using声明变为using指示，重新回答之前的问题。
+```cpp
+namespace Exercise {
+	int ivar = 0;
+	double dvar = 0;
+	const int limit = 1000;
+}
+int ivar = 0;
+//位置1
+void main() {
+	//位置2
+	double dvar = 3.1416;
+	int iobj = limit + 1;
+	++ivar;
+	++::ivar;
+}
+```
+
+```cpp
+namespace Exercise{
+	int ivar = 0;
+	double dvar = 0;
+	const int limit = 1000;
+}
+int ivar = 0;
+
+using Exercise::ivar;	//1
+using Exercise::dvar;
+using Exercise::limit;
+
+// using namespace Exercise;	//3
+
+void mainp(){
+	// using Exercise::ivar;	//2
+	// using Exercise::dvar;
+	// using Exercise::limit;
+
+	// using namespace Exercise;	//4
+
+	double dvar = 3.1416;
+	int iobj = limit + 1;
+	++ivar;
+	++::ivar;
+}
+
+int main()
+{
+	return 0;
+}
+```
+  
+## 练习18.17
+
+> 实际编写代码检验你对上一题的回答是否正确。
+
+详见18.16。  
+
+## 练习18.18
+
+> 已知有下面的 swap 的典型定义，当 mem1 是一个 string 时程序使用 swap 的哪个版本？如果 mem1 是 int 呢？说明在这两种情况下名字查找的过程。
+```cpp
+void swap(T v1, T v2)
+{
+	using std::swap;
+	swap(v1.mem1, v2.mem1);
+	//交换类型的其他成员
+}
+```
+
+前者使用string版本的swap；后者使用实例化为int的swap。
+  
+## 练习18.19
+
+> 如果对 swap 的调用形如 std::swap(v1.mem1, v2.mem1) 将会发生什么情况？
+
+将只使用标准库的swap，如果v1.mem1和v2.mem1为用户自定义类型，将无法使用用户定义的针对该类型的swap。
+  
+## 练习18.20
+
+> 在下面的代码中，确定哪个函数与compute调用匹配。列出所有候选函数和可行函数，对于每个可行函数的实参与形参的匹配过程来说，发生了哪种类型转换？
+```cpp
+namespace primerLib {
+	void compute();
+	void compute(const void *);
+}
+using primerLib::compute;
+void compute(int);
+void compute(double, double = 3.4);
+void compute(char*, char* = 0);
+void f()
+{
+	compute(0);
+}
+```
+
+候选函数：全部；  
+可行函数：  
+void compute(int)（最佳匹配）  
+void compute(double, double = 3.4)（int->double）  
+void compute(char*, char* = 0)（0->nullptr）  
+void compute(const void *)（0->nullptr）  
+改变后：  
+void compute(const void *)为最佳匹配。 
