@@ -685,3 +685,122 @@ void compute(char*, char* = 0)（0->nullptr）
 void compute(const void *)（0->nullptr）  
 改变后：  
 void compute(const void *)为最佳匹配。 
+
+## 练习18.21
+
+> 解释下列声明的含义，在它们当作存在错误吗？如果有，请指出来并说明错误的原因。
+```cpp
+(a) class CADVehicle : public CAD, Vehicle { ... };
+(b) class DbiList : public List, public List { ... };
+(c) class iostream : public istream, public ostream { ... };
+```
+
+（a）CADVehicle公开继承了CAD，私有继承了Vehicle；  
+（b）重复继承；  
+（c）iostream公开继承了istream和ostream。  
+  
+## 练习18.22
+
+> 已知存在如下所示的类的继承体系，其中每个类都定义了一个默认构造函数：
+```cpp
+class A { ... };
+class B : public A { ... };
+class C : public B { ... };
+class X { ... };
+class Y { ... };
+class Z : public X, public Y { ... };
+class MI : public C, public Z { ... };
+```
+对于下面的定义来说，构造函数的执行顺序是怎样的？
+```cpp
+MI mi;
+```
+
+A->B->C->X->Y->Z->MI。
+  
+## 练习18.23
+
+> 使用练习18.22的继承体系以及下面定义的类 D，同时假定每个类都定义了默认构造函数，请问下面的哪些类型转换是不被允许的？
+```cpp
+class D : public X, public C { ... };
+p *pd = new D;
+(a) X *px = pd;
+(b) A *pa = pd;
+(c) B *pb = pd;
+(d) C *pc = pd;
+```
+
+（a）允许；  
+（b）允许；  
+（c）允许；  
+（d）允许。  
+  
+## 练习18.24
+
+> 在第714页，我们使用一个指向 Panda 对象的 Bear 指针进行了一系列调用，假设我们使用的是一个指向 Panda 对象的 ZooAnimal 指针将会发生什么情况，请对这些调用语句逐一进行说明。
+
+pe->print() 正确；  
+pe->highlight() 错误；  
+pe->toes() 错误；  
+pe->duddle() 错误；  
+delete pe 正确。  
+  
+## 练习18.25
+
+> 假设我们有两个基类 Base1 和 Base2，它们各自定义了一个名为 print 的虚成员和一个虚析构函数。从这两个基类中文名派生出下面的类，它们都重新定义了 print 函数：
+```cpp
+class D1 : public Base1 { /* ... */};
+class D2 : public Base2 { /* ... */};
+class MI : public D1, public D2 { /* ... */};
+```
+通过下面的指针，指出在每个调用中分别使用了哪个函数：
+```cpp
+Base1 *pb1 = new MI;
+Base2 *pb2 = new MI;
+D1 *pd1 = new MI;
+D2 *pd2 = new MI;
+(a) pb1->print();
+(b) pd1->print();
+(c) pd2->print();
+(d) delete pb2;
+(e) delete pd1;
+(f) delete pd2;
+```
+
+```cpp
+struct Base1 {
+	void print(int) const;
+protected:
+	int ival;
+	double dval;
+	char cval;
+private:
+	int *id;
+};
+struct Base2 {
+	void print(double) const;
+protected:
+	double fval;
+private:
+	double dval;
+};
+struct Derived : public Base1 {
+	void print(std::string) const;
+protected:
+	std::string sval;
+	double dval;
+};
+struct MI : public Derived, public Base2 {
+	void print(std::vector<double>);
+protected:
+	int *ival;
+	std::vector<double> dvec;
+};
+```
+
+（a）MI::print()；  
+（b）MI::print()；  
+（c）MI::print()；  
+（d）MI析构函数（会依次调用基类析构函数）；  
+（e）MI析构函数（会依次调用基类析构函数）；  
+（f）MI析构函数（会依次调用基类析构函数）。  
