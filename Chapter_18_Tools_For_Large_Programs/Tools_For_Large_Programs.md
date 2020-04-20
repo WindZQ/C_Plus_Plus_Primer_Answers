@@ -804,3 +804,259 @@ protected:
 （d）MI析构函数（会依次调用基类析构函数）；  
 （e）MI析构函数（会依次调用基类析构函数）；  
 （f）MI析构函数（会依次调用基类析构函数）。  
+
+## 练习18.26
+
+> 已知如上所示的继承体系，下面对print的调用为什么是错误的？适当修改MI，令其对print的调用可以编译通过并正确执行。
+```cpp
+MI mi;
+mi.print(42);
+```
+
+没有匹配的print调用，当注释void print(std;:vector<double>)时又会出现二义性；故为该函数定义一个新版本。  
+```cpp
+#include <iostream>
+#include <vector>
+struct Base1{
+    void print(int) const{
+        std::cout<<"Base1 Print Used"<<std::endl;
+        };
+protected:
+        int ival;
+        double dval;
+        char cval;
+private:
+        int *id;
+};
+struct Base2 {
+    void print(double) const;
+protected:
+    double fval;
+private:
+    double dval;
+};
+
+struct Derived : public Base1 {
+void print(std::string) const;
+protected:
+    std::string sval;
+    double dval;
+};
+
+struct MI : public Derived, public Base2{
+
+void print(std::vector<double>){};
+void print(int x){
+    Base1::print(x);
+}
+protected:
+    int *ival;
+    std::vector<double> dvec;
+};
+
+using namespace std;
+
+int main()
+{
+    MI mi;
+    mi.print(42);
+    return 0;
+}
+```
+  
+## 练习18.27
+
+> 已知如上所示的继承体系，同时假定为MI添加了一个名为foo的函数：
+```cpp
+int ival;
+double dval;
+void MI::foo(double cval)
+{
+	int dval;
+	//练习中的问题发生在此处
+}
+(a) 列出在MI::foo中可见的所有名字。
+(b) 是否存在某个可见的名字是继承自多个基类的？
+(c) 将Base1的dval成员与Derived 的dval 成员求和后赋给dval的局部实例。
+(d) 将MI::dvec的最后一个元素的值赋给Base2::fval。
+(e) 将从Base1继承的cval赋给从Derived继承的sval的第一个字符。
+```
+
+（a）Base1中，ival、dval、cval、print；  
+Base2中，fval、print；  
+Derived中，sval、dval、print；  
+MI中，ival、dvec、print、foo。  
+（b）存在，ival、dval、print。  
+（c）（d）（e）如下所示。  
+```cpp
+#include <iostream>
+#include <vector>
+struct Base1{
+    void print(int) const{
+        std::cout<<"Base1 Print Used"<<std::endl;
+        };
+protected:
+        int ival;
+        double dval;
+        char cval = 'b';
+private:
+        int *id;
+};
+struct Base2 {
+    void print(double) const;
+protected:
+    double fval;
+private:
+    double dval;
+};
+
+struct Derived : public Base1 {
+void print(std::string) const;
+protected:
+    std::string sval = "aaa";
+    double dval;
+};
+
+struct MI : public Derived, public Base2{
+
+void print(std::vector<double>){};
+void print(int x){
+    Base1::print(x);
+}
+void foo(double);
+
+protected:
+    int *ival;
+    std::vector<double> dvec = {1.0, 2.0, 3.0};
+};
+
+int iva;
+double dval;
+void MI::foo(double cval)
+{
+    int dval;
+    dval = Base1::dval + Derived::dval;
+    Base2::fval = dvec.back();
+    sval.at(0) = Base1::cval;
+}
+
+int main()
+{
+    MI mi;
+    mi.print(42);
+    return 0;
+}
+```
+  
+## 练习18.28
+
+> 已知存在如下的继承体系，在 VMI 类的内部哪些继承而来的成员无须前缀限定符就能直接访问？哪些必须有限定符才能访问？说明你的原因。
+```cpp
+struct Base {
+	void bar(int);
+protected:
+	int ival;
+};
+struct Derived1 : virtual public Base {
+	void bar(char);
+	void foo(char);
+protected:
+	char cval;
+};
+struct Derived2 : virtual public Base {
+	void foo(int);
+protected:
+	int ival;
+	char cval;
+};
+class VMI : public Derived1, public Derived2 { };
+```
+
+无需限定符的成员：  
+Derived1::bar（bar不仅是Base的成员，也是Derived1的成员，派生类的bar比共享虚机类的bar优先级更高）；  
+Derived2::ival（派生类Derived2的ival比共享虚机类的ival优先级更高）；  
+需要限定符的成员：  
+foo（Derived1和Derived2都存在该成员）；  
+cval（Derived1和Derived2都存在该成员）;  
+其他需要限定符的原因为会被覆盖。  
+  
+## 练习18.29
+
+> 已知有如下所示的类继承关系：
+```cpp
+class Class { ... };
+class Base : public Class { ... };
+class D1 : virtual public Base { ... };
+class D2 : virtual public Base { ... };
+class MI : public D1, public D2 { ... };
+class Final : public MI, public Class { ... };
+(a) 当作用于一个Final对象时，构造函数和析构函数的执行次序分别是什么？
+(b) 在一个Final对象中有几个Base部分？几个Class部分？
+(c) 下面的哪些赋值运算符将造成编译错误？
+Base *pb; Class *pc; MI *pmi; D2 *pd2;
+(a) pb = new Class;
+(b) pc = new Final;
+(c) pmi = pb;
+(d) pd2 = pmi;
+```
+
+（a）构造函数执行次序Class、Base、D1、D2、MI、Class、Final，析构函数执行次数与上述相反；  
+（b）一个Base两个Class；  
+（c）（a）编译错误，（b）编译错误，（c）编译错误，（d）正确。  
+  
+## 练习18.30
+
+> 在Base中定义一个默认构造函数、一个拷贝构造函数和一个接受int形参的构造函数。在每个派生类中分别定义这三种构造函数，每个构造函数应该使用它的形参初始化其Base部分。
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+class Class {
+};
+
+class Base : public Class {
+public:
+	// Base() = default;
+	Base() { cout << "Base()" << endl; }
+	Base(int) { cout << "Base(int)" << endl; }
+	Base(const Base &b) {}
+};
+
+class D1 : virtual public Base {
+public:
+	D1() = default;
+	D1(int i) : Base(i) { cout << "D1(int)" << endl; }
+	D1(const D1 &d){}
+};
+
+class D2 : virtual public Base {
+public:
+	D2() = default;
+	D2(int i) : Base(i) { cout << "D2(int)" << endl; }
+	D2(const D2 &d) {}
+};
+
+class MI : public D1, public D2 {
+public:
+	MI() = default;
+	MI(int i) : D1(i), D2(i) { cout << "MI(int)" << endl; }
+	MI(const MI &m) {}
+};
+
+class Final : public MI, public Class {
+public:
+	Final() = default;
+	// Final(int i) : MI(i) { cout << "Final(int)" << endl; }
+	Final(int i) : MI(i), Base(i) { cout << "Final(int)" << endl; }
+	Final(const Final &f) {}
+};
+
+int main(int argc, char const *argv[])
+{
+	Final f(1);
+
+	return 0;
+}
+```
