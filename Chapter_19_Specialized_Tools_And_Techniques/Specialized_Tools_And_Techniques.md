@@ -329,3 +329,199 @@ int main(int argc, char const *argv[])
 > 在什么情况下你应该用 dynamic_cast 替代虚函数？
 
 我们想使用基类对象的指针或引用执行某个派生类操作并且该操作不是虚函数，则可以使用RTTI运算符（该类类型应该含有虚函数）。  
+
+  
+## 练习19.6
+
+> 编写一条表达式将 Query_base 指针动态转换为 AndQuery 指针。分别使用 AndQuery 的对象以及其他类型的对象测试转换是否有效。打印一条表示类型转换是否成功的信息，确保实际输出的结果与期望的一致。
+
+Query_base为抽象虚类，AndQuery的构造函数为private，暂时没想到方法来实现该题，目前使用19.3的继承体系来验证。  
+```cpp
+#include <typeinfo>
+#include <iostream>
+
+class A
+{
+public:
+	virtual ~A() {}
+};
+
+class B : public A
+{};
+
+class C : public B
+{};
+
+class D : public B, public A
+{};
+
+int main(int argc, char const *argv[])
+{
+	A *pa1 = new C;
+    if(C *qc = dynamic_cast<C*>(pa1))
+    {
+        std::cout << "success" << std::endl;
+    }else
+    {
+        std::cout << "fail" << std::endl;
+    }
+
+	A *pa2 = new C;
+	try{
+		const C &rc = dynamic_cast<const C&>(*pa2);
+	}catch(std::bad_cast &e){
+		std::cout << e.what() << std::endl;
+	}
+
+	C c = C();
+	if(typeid(*pa1) == typeid(*pa2)) std::cout << "same type" << std::endl;
+	if(typeid(*pa1) == typeid(c)) std::cout << "same type as C" << std::endl;
+	if(typeid(*pa1) == typeid(C)) std::cout << "same type as C" << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习19.7
+
+> 编写与上一个练习类似的转换，这一次将 Query_base 对象转换为 AndQuery 的引用。重复上面的测试过程，确保转换能正常工作。
+
+详见１9.6。  
+  
+## 练习19.8
+
+> 编写一条 typeid 表达式检查两个 Query_base 对象是否指向同一种类型。再检查该类型是否是 AndQuery。
+
+详见１9.6。  
+  
+## 练习19.9
+
+> 编写与本节最后一个程序类似的代码，令其打印你的编译器为一些常见类型所起的名字。如果你得到的输出结果与本书类似，尝试编写一个函数将这些字符串翻译成人们更容易读懂的形式。
+
+```cpp
+#include <iostream>
+#include <typeinfo>
+
+class Base
+{
+	friend bool operator==(const Base&, const Base&);
+public:
+	Base() = default;
+	Base(int i_) : i(i_) { }
+protected:
+	virtual bool equal(const Base&) const;
+private:
+	int i;
+};
+
+class Derived : public Base
+{
+public:
+	Derived() = default;
+	Derived(std::string s_, int i_) : s(s_), Base(i_) { }
+protected:
+	bool equal(const Base&) const;
+private:
+	std::string s;
+};
+
+bool operator==(const Base &lhs, const Base &rhs)
+{
+	return typeid(lhs) == typeid(rhs) && lhs.equal(rhs);
+}
+
+bool Base::equal(const Base &rhs) const
+{
+	return this->i == rhs.i;
+}
+
+bool Derived::equal(const Base &rhs) const
+{
+	auto r = dynamic_cast<const Derived&>(rhs);
+	return (this->s == r.s) && this->Base::equal(rhs);
+}
+
+int main()
+{
+	Base *pb1 = new Derived();
+	Base *pb2 = new Derived();
+	Base *pb3 = new Derived("a", 1);
+	Base *pb4 = new Base();
+
+	std::cout << std::boolalpha << (*pb1 == *pb2) << std::endl;
+	std::cout << std::boolalpha << (*pb1 == *pb3) << std::endl;
+	std::cout << std::boolalpha << (*pb1 == *pb4) << std::endl;
+
+	int arr[10];
+	Derived d;
+
+	std::cout << typeid(42).name() << ", "
+			  << typeid(arr).name() << ", "
+			  << typeid(d).name() << ", "
+			  << typeid(std::string).name() << ", "
+			  << typeid(pb1).name() << ", "
+			  << typeid(*pb1).name() << ", "
+			  << typeid(*pb3).name() << std::endl;
+
+	return 0;
+}
+```
+```sh
+$ ./ex09 true
+false
+false
+i, A10_i, 7Derived, Ss, P4Base, 7Derived, 7Derived
+```
+  
+## 练习19.10
+
+> 已知存在如下的类继承体系，其中每个类定义了一个默认公有的构造函数和一个虚析构函数。下面的语句将打印哪些类型名字？
+```cpp
+class A { /* ... */ };
+class B : public A { /* ... */ };
+class C : public B { /*...*/ };
+(a) A *pa = new C;
+	cout << typeid(pa).name() << endl;
+(b) C cobj;
+	A& ra = cobj;
+	cout << typeid(&ra).name() << endl;
+(c) B *px = new B;
+	A& ra = *px;
+	cout << typeid(ra).name() << endl;
+```
+
+（a）P1A；  
+（b）P1A；  
+（c）1B。  
+```cpp
+#include <typeinfo>
+#include <iostream>
+
+class A
+{
+public:
+	virtual ~A() {}
+};
+
+class B : public A
+{};
+
+class C : public B
+{};
+
+int main(int argc, char const *argv[])
+{
+	// A *pa = new C;
+	// std::cout << typeid(pa).name() << std::endl;
+
+	// C cobj;
+	// A &ra = cobj;
+	// std::cout << typeid(&ra).name() << std::endl;
+
+	B *px = new B;
+	A &ra = *px;
+	std::cout << typeid(ra).name() << std::endl;
+
+	return 0;
+}
+```
