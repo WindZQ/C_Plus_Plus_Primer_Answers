@@ -525,3 +525,77 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 ```
+## 练习19.11
+
+> 普通的数据指针和指向数据成员的指针有何区别？
+
+普通的数据指针指向一个对象；类成员指针指向类的非静态成员。当初始化这样一个指针时，我们令其指向类的某个成员，但是不指定该成员所属的对象；直到使用成员指针时，才提供所属的对象。  
+  
+## 练习19.12
+
+> 定义一个成员指针，令其可以指向 Screen 类的 cursor 成员。通过该指针获得 Screen::cursor 的值。
+
+```cpp
+#include <string>
+#include <iostream>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        static const std::string Screen::*data() { return &Screen::contents; }
+        static const pos Screen::*pcursor() { return &Screen::cursor; }
+        Screen() = default;
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+};
+
+int main()
+{
+    // const std::string Screen::*pdata;
+    // pdata = &Screen::contents;
+    // auto pdata = &Screen::contents;  //contents is private
+
+    const std::string Screen::*pdata = Screen::data();
+    Screen myScreen(2, 2, 'c');
+    auto s = myScreen.*pdata;
+    std::cout << s << std::endl;
+
+    const std::string::size_type Screen::*pcursor = Screen::pcursor();
+    auto i = myScreen.*pcursor;
+    std::cout << i << std::endl;
+
+    return 0;
+}
+```
+  
+## 练习19.13
+
+> 定义一个类型，使其可以表示指向 Sales_data 类的 bookNo 成员的指针。
+
+```cpp
+const std::string Sales_data::*pdata;
+```
+  
+## 练习19.14
+
+> 下面的代码合法吗？如果合法，代码的含义是什么？如果不合法，解释原因。
+```cpp
+auto pmf = &Screen::get_cursor;
+pmf = &Screen::get;
+```
+
+不合法，Screen中get_cursor函数返回的为pos类型，get函数返回的为char类型。  
+  
+## 练习19.15
+
+> 普通函数指针和指向成员函数的指针有何区别？
+
+和普通函数指针不同的是，在成员函数和指向该成员的指针之间不存在自动转换规则。  
