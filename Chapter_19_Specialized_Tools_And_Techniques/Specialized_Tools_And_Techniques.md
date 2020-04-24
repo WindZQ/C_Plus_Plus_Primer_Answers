@@ -598,4 +598,316 @@ pmf = &Screen::get;
 
 > 普通函数指针和指向成员函数的指针有何区别？
 
-和普通函数指针不同的是，在成员函数和指向该成员的指针之间不存在自动转换规则。  
+和普通函数指针不同的是，在成员函数和指向该成员的指针之间不存在自动转换规则。 
+
+## 练习19.16
+
+> 声明一个类型别名，令其作为指向 Sales_data 的 avg_price 成员的指针的同义词。
+
+```cpp
+using AvgPrice = double (Sales_data::*)() const;
+AvgPrice avgprice = &Sales_data::avg_price;
+```
+  
+## 练习19.17
+
+> 为 Screen 的所有成员函数类型各定义一个类型别名。
+
+```cpp
+#include <string>
+#include <iostream>
+
+class Screen {
+    public:
+        using pos = std::string::size_type;
+
+        static const std::string Screen::*data() { return &Screen::contents; }
+        static const pos Screen::*pcursor() { return &Screen::cursor; }
+        Screen() = default;
+        Screen(pos ht, pos wd, char c):height(ht), width(wd), contents(ht*wd, c){ }
+
+        char get() const { return contents[cursor]; }
+        char get(pos r, pos c) const { return contents[r*width+c]; }
+
+    private:
+        pos cursor = 0;
+        pos height = 0, width = 0;
+        std::string contents;
+};
+
+int main()
+{
+    Screen myScreen(2, 2, 'c');
+    char (Screen::*pmf2)(Screen::pos, Screen::pos) const;
+    pmf2 = &Screen::get;
+    // char c1 = (myScreen.*pmf2)();
+    char c2 = (myScreen.*pmf2)(0, 0);
+    std::cout << c2 << std::endl;
+
+    using Get1 = char (Screen::*)() const;
+    using Get2 = char (Screen::*)(Screen::pos, Screen::pos) const;
+    Get1 get1 = &Screen::get;
+    Get2 get2 = &Screen::get;
+    std::cout << (myScreen.*get1)() << std::endl;
+    std::cout << (myScreen.*get2)(0, 0) << std::endl;
+
+    return 0;
+}
+```
+  
+## 练习19.18
+
+> 编写一个函数，使用 count_if 统计在给定的 vector 中有多少个空 string。
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <functional>
+#include <algorithm>
+
+int main()
+{
+	std::vector<std::string> vs = {"a", "bb", "", "ccc", ""};
+	std::function<bool (const std::string&)> fcn = &std::string::empty;
+
+	auto it1 = std::find_if(vs.begin(), vs.end(), fcn);
+	std::cout << "function: " << it1 - vs.begin() << std::endl;
+
+	auto it2 = std::find_if(vs.begin(), vs.end(), std::mem_fn(&std::string::empty));
+	std::cout << "mem_fn: " << it2 - vs.begin() << std::endl;
+
+	auto it3 = std::find_if(vs.begin(), vs.end(), std::bind(&std::string::empty, std::placeholders::_1));
+	std::cout << "bind: " << it3 - vs.begin() << std::endl;
+
+	std::cout << "count_if: " << std::count_if(vs.begin(), vs.end(), fcn) << std::endl;
+
+	return 0;
+}
+```
+  
+## 练习19.19
+
+> 编写一个函数，令其接受vector<Sales_data>并查找平均价格高于某个值的第一个元素。
+
+Sales_data.h
+```cpp
+#ifndef SALES_DATA_H_
+#define SALES_DATA_H_
+
+#include <string>
+#include <stdexcept>
+
+class isbn_mismatch : public std::logic_error
+{
+public:
+	explicit isbn_mismatch(const std::string &s) : std::logic_error(s) { }
+	isbn_mismatch(const std::string &s, const std::string &lhs, const std::string &rhs) :
+		std::logic_error(s), left(lhs), right(rhs) { }
+	const std::string left, right;
+};
+
+struct Sales_data;
+
+std::istream &operator>>(std::istream &is, Sales_data &item);
+std::ostream &operator<<(std::ostream &os, const Sales_data &item);
+Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs);
+
+struct Sales_data
+{
+friend std::istream& operator>>(std::istream&, Sales_data&);
+friend std::ostream& operator<<(std::ostream&, const Sales_data&);
+friend Sales_data operator+(const Sales_data&, const Sales_data&);
+friend bool operator==(const Sales_data&, const Sales_data&);
+friend class std::hash<Sales_data>;
+public:
+	Sales_data(const std::string &s, unsigned n, double p) : bookNo(s), units_sold(n), revenue(p*n){std::cout << "Sales_data(const std::string &s, unsigned n, double p)" << std::endl;}
+	Sales_data() : Sales_data("", 0, 0){std::cout << "Sales_data() : Sales_data(\"\", 0, 0)" << std::endl;}
+	Sales_data(const std::string &s) : Sales_data(s, 0, 0){std::cout << "Sales_data(const std::string &s) : Sales_data" << std::endl;}
+	Sales_data(std::istream &is) : Sales_data(){/*read(is, *this);*/ is >> *this; std::cout << "Sales_data(std::istream &is) : Sales_data()" << std::endl;}
+	std::string isbn() const {return bookNo;}
+	Sales_data& operator=(const std::string&);
+    Sales_data& operator+=(const Sales_data&);
+    Sales_data& operator-=(const Sales_data&);
+    // bool higher_avg_price()
+    // {
+    // 	return this->avg_price() > 10;
+    // }
+    bool higher_avg_price(double ref_price)
+    {
+    	return this->avg_price() > ref_price;
+    }
+private:
+	inline double avg_price() const;
+
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+
+inline double Sales_data::avg_price() const
+{
+	if(units_sold)
+		return revenue / units_sold;
+	else
+		return 0;
+}
+
+Sales_data& Sales_data::operator=(const std::string &s)
+{
+	*this = Sales_data(s);
+	return *this;
+}
+
+Sales_data& Sales_data::operator+=(const Sales_data &rhs)
+{
+	if(isbn() != rhs.isbn())
+		throw isbn_mismatch("wrong isbns", isbn(), rhs.isbn());
+	units_sold += rhs.units_sold;
+	revenue += rhs.revenue;
+
+	return *this;
+}
+
+Sales_data& Sales_data::operator-=(const Sales_data &rhs)
+{
+	units_sold -= rhs.units_sold;
+	revenue -= rhs.revenue;
+
+	return *this;
+}
+
+std::istream &operator>>(std::istream &is, Sales_data &item)
+{
+	double price = 0;
+
+	is >> item.bookNo >> item.units_sold >> price;
+	if(is)
+		item.revenue = price * item.units_sold;
+	else
+		item = Sales_data();
+
+	return is;
+}
+
+std::ostream &operator<<(std::ostream &os, const Sales_data &item)
+{
+	os << item.isbn() << " " << item.units_sold << " " << item.revenue << " " << item.avg_price();
+
+	return os;
+}
+
+Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
+{
+	Sales_data sum = lhs;
+	sum += rhs;
+
+	return sum;
+}
+
+bool operator==(const Sales_data &lhs, const Sales_data &rhs)
+{
+	return lhs.isbn() == rhs.isbn() && 
+		lhs.units_sold == rhs.units_sold && 
+		lhs.revenue == rhs.revenue;
+}
+
+#endif
+```
+  
+## 练习19.20
+
+> 将你的 QueryResult 类嵌套在 TextQuery 中，然后重新运行12.3.2节中使用了 TextQuery 的程序。
+
+```cpp
+#ifndef TEXTQUERY_H_
+#define TEXTQUERY_H_
+
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <set>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include "StrBlob.h"
+
+namespace chapter10
+{
+	class TextQuery
+	{
+	public:
+		class QueryResult;
+		using line_no = std::vector<std::string>::size_type;
+		TextQuery(std::ifstream&);
+		QueryResult query(const std::string&) const;
+	private:
+		StrBlob file;
+		std::map<std::string, std::shared_ptr<std::set<line_no>>> word_map;
+	};
+
+	class TextQuery::QueryResult
+	{
+		friend std::ostream& print(std::ostream&, const QueryResult&);
+	public:
+		QueryResult(std::string s, std::shared_ptr<std::set<line_no>> p, StrBlob f) : sought(s), lines(p), file(f) { }
+		std::set<StrBlob::size_type>::iterator begin() const { return lines->begin(); }
+		std::set<StrBlob::size_type>::iterator end() const { return lines->end(); }
+		// std::shared_ptr<StrBlob> get_file() const { return std::make_shared<StrBlob>(file); }
+		const StrBlob& get_file() const { return file; }
+	private:
+		std::string sought;
+		std::shared_ptr<std::set<line_no>> lines;
+		StrBlob file;
+	};
+
+	TextQuery::TextQuery(std::ifstream &ifs)
+	{
+		std::string text_line;
+
+		while(std::getline(ifs, text_line))
+		{
+			file.push_back(text_line);
+			int line_number = file.size() - 1;
+			std::istringstream line(text_line);
+			std::string text_word;
+			while(line >> text_word)
+			{
+				std::string word;
+				std::copy_if(text_word.begin(), text_word.end(), std::back_inserter(word), isalpha);
+				// std::cout << word << std::endl;
+				auto &wm_lines = word_map[word];
+				if(!wm_lines)
+					wm_lines.reset(new std::set<line_no>);
+				wm_lines->insert(line_number);
+			}
+		}
+	}
+
+	TextQuery::QueryResult TextQuery::query(const std::string &sought) const
+	{
+		static std::shared_ptr<std::set<TextQuery::line_no>> nodata(new std::set<TextQuery::line_no>);
+		auto loc = word_map.find(sought);
+		if(loc == word_map.end())
+			return QueryResult(sought, nodata, file);
+		else
+			return QueryResult(sought, loc->second, file);
+	}
+
+	std::ostream &print(std::ostream &os, const TextQuery::QueryResult &qr)
+	{
+		os << qr.sought << " occurs " << qr.lines->size() << " " /*<< make_plural(qr.lines->size(), "time", "s")*/ << std::endl;
+		for(auto num : *qr.lines)
+		{
+			ConstStrBlobPtr p(qr.file, num);
+			os << "\t(line " << num + 1 << ") " << p.deref() << std::endl;
+		}
+			
+		return os;
+	}
+}
+
+#endif
+``` 
